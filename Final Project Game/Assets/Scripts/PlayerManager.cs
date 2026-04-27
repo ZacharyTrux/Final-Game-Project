@@ -14,6 +14,9 @@ public class PlayerManager : MonoBehaviour{
     public Transform camTopDownTarget;
     public float transitionDuration = 0.8f;
 
+    public float orthographicSize = 5f;
+    public float fieldOfView = 60f;
+
     private bool is2DActive = true;
     private bool isTransitioning = false;
     //public PlayerManager Instance = {get; private set;};
@@ -22,6 +25,9 @@ public class PlayerManager : MonoBehaviour{
         // grab camera positions
         mainCamera.transform.position = cam2DTarget.position;
         mainCamera.transform.rotation = cam2DTarget.rotation;
+
+        mainCamera.orthographic = true;
+        mainCamera.orthographicSize = orthographicSize;
 
         player2D.enabled = true;
         playerTopDown.enabled = false;
