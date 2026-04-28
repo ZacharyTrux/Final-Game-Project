@@ -10,6 +10,7 @@ public class Player2D : MonoBehaviour
 
     [Header("Detection")]
     public LayerMask groundLayer;
+    public LayerMask pickupLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
 
@@ -39,7 +40,6 @@ public class Player2D : MonoBehaviour
     }
 
     private void OnJumpPerformed(InputAction.CallbackContext context){
-        print(isGrounded);
         if (isGrounded){
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
@@ -47,7 +47,7 @@ public class Player2D : MonoBehaviour
 
     void Update(){
         moveInput = controls.Player.Move.ReadValue<Vector2>();
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer) | Physics.CheckSphere(groundCheck.position, groundCheckRadius, pickupLayer);
     }
 
     void FixedUpdate(){ // consistent jumping physics

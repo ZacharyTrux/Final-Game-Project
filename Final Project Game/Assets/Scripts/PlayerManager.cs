@@ -14,7 +14,7 @@ public class PlayerManager : MonoBehaviour{
     public Transform camTopDownTarget;
     public float transitionDuration = 0.8f;
 
-    public float orthographicSize = 5f;
+    public float orthographicSize = 15f;
     public float fieldOfView = 60f;
 
     private bool is2DActive = true;
