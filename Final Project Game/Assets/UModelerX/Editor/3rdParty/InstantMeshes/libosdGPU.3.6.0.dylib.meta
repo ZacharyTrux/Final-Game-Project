@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: df9dcbc3c2ccf4d0abc9d80a5832487d
+AssetOrigin:
+  serializedVersion: 1
+  productId: 330215
+  packageName: UModeler X
+  packageVersion: UModeler X 1.2.0
+  assetPath: Assets/UModelerX/Editor/3rdParty/InstantMeshes/libosdGPU.3.6.0.dylib
+  uploadId: 904160

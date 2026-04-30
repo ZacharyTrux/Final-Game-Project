@@ -1,21 +1,27 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class PlayerTopDown : MonoBehaviour{
     public float moveSpeed = 5f;
     public float pickupRange = 1.5f;
+    
+    // layers
     public LayerMask boxLayer;
+    // placement locations
     public Transform holdLocation;
     public Transform placeLocation;
 
+    public Grid grid;
+
+    private bool isMoving;
     private Rigidbody rb;
     private PlayerInput controls;
     private Vector2 moveInput;
     private GameObject heldBox;
     
 
-    void Awake()
-    {
+    void Awake(){
         rb = GetComponent<Rigidbody>();
         controls = new PlayerInput();
         rb.useGravity = false;
@@ -33,10 +39,13 @@ public class PlayerTopDown : MonoBehaviour{
     void Update(){
         moveInput = controls.Player.Move.ReadValue<Vector2>();
 
-        if (moveInput != Vector2.zero)
-        {
-            float targetAngle = Mathf.Atan2(moveInput.y, moveInput.x) * Mathf.Rad2Deg;
-            rb.rotation = Quaternion.Euler(0f, targetAngle, 0f);
+        if (!isMoving && moveInput != Vector2.zero){
+            Vector2 gridPos = SnapToCell(moveInput);
+            Vector3Int currentCell = grid.WorldToCell(transform.position);
+            Vector3Int targetCell = currentCell + new Vector3Int((int)gridPos.x, (int)gridPos.y);
+            Vector3 targetPos = grid.GetCellCenterWorld(targetCell);
+            targetPos.z = transform.position.z;
+            StartCoroutine(MoveToCell(targetPos));
         }
 
         if(controls.Player.Interact.WasPressedThisFrame()){
@@ -47,6 +56,25 @@ public class PlayerTopDown : MonoBehaviour{
                 Drop();
             }
         }
+    }
+
+    Vector2 SnapToCell(Vector2 input){
+        if(Mathf.Abs(input.x) >= Mathf.Abs(input.y)){
+            return new Vector2(Mathf.Sign(input.x), 0);
+        }
+        else{
+            return new Vector2(0, Mathf.Sign(input.y));
+        }
+    }
+
+    IEnumerator MoveToCell(Vector3 cell){
+        isMoving = true;
+        while(Vector3.Distance(transform.position, cell) > 0.01f){
+            transform.position = Vector3.MoveTowards(transform.position, cell, moveSpeed * Time.deltaTime);
+            yield return null;
+        }
+        transform.position = cell;
+        isMoving = false;
     }
 
     void TryPickUp(){
