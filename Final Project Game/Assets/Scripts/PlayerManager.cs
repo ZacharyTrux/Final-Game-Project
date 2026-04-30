@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using Unity.Cinemachine;
 
 public class PlayerManager : MonoBehaviour{
     [Header("Players")]
@@ -8,70 +9,54 @@ public class PlayerManager : MonoBehaviour{
     public PlayerTopDown playerTopDown;
 
     [Header("Camera")]
-    public Camera mainCamera;
-    // get camera positions
-    public Transform cam2DTarget; 
-    public Transform camTopDownTarget;
-    public float transitionDuration = 0.8f;
+    public CinemachineCamera oCam;
+    public CinemachineCamera pCam;
 
-    public float orthographicSize = 15f;
-    public float fieldOfView = 60f;
-
+    public float tDuration = 0.8f;
     private bool is2DActive = true;
     private bool isTransitioning = false;
     //public PlayerManager Instance = {get; private set;};
 
     void Start(){
-        // grab camera positions
-        mainCamera.transform.position = cam2DTarget.position;
-        mainCamera.transform.rotation = cam2DTarget.rotation;
+        Setup2D();
+    }
 
-        mainCamera.orthographic = true;
-        mainCamera.orthographicSize = orthographicSize;
+    void Update(){
+        if(Keyboard.current.tabKey.wasPressedThisFrame && !isTransitioning){
+            StartCoroutine(ChangePerspective());
+        }
+    }
 
+    IEnumerator ChangePerspective(){
+        isTransitioning = true;
+        if(is2DActive){
+            SetupTopDown();
+            is2DActive = false;
+        }
+        else{
+            Setup2D();
+            is2DActive = true;
+        }
+        yield return new WaitForSeconds(tDuration);
+        isTransitioning = false;
+    }
+
+    private void Setup2D(){
+        oCam.Priority = 11;
+        pCam.Priority = 9;
         player2D.enabled = true;
         playerTopDown.enabled = false;
     }
 
-    void Update()
-    {
-        if (Keyboard.current.tabKey.wasPressedThisFrame && !isTransitioning)
-            StartCoroutine(DoTransition());
-    }
-
-    private IEnumerator DoTransition()
-    {
-        isTransitioning = true;
-
-        // Disable both players during the transition
+    private void SetupTopDown(){
+        pCam.Priority = 11;
+        oCam.Priority = 9;
         player2D.enabled = false;
-        playerTopDown.enabled = false;
-
-        is2DActive = !is2DActive;
-        Transform target = is2DActive ? cam2DTarget : camTopDownTarget;
-
-        Vector3 startPos = mainCamera.transform.position;
-        Quaternion startRot = mainCamera.transform.rotation;
-
-        float elapsed = 0f;
-        while (elapsed < transitionDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, elapsed / transitionDuration);
-
-            mainCamera.transform.position = Vector3.Lerp(startPos, target.position, t);
-            mainCamera.transform.rotation = Quaternion.Lerp(startRot, target.rotation, t);
-
-            yield return null;
-        }
-
-        
-        mainCamera.transform.position = target.position;
-        mainCamera.transform.rotation = target.rotation;
-
-        player2D.enabled = is2DActive;
-        playerTopDown.enabled = !is2DActive;
-
-        isTransitioning = false;
+        playerTopDown.enabled = true;
     }
+
+
+
+
+    
 }
