@@ -11,6 +11,7 @@ public class PlayerManager : MonoBehaviour{
     [Header("Camera")]
     public CinemachineCamera oCam;
     public CinemachineCamera pCam;
+    public CinemachineCamera tCam;
 
     public float tDuration = 0.8f;
     private bool is2DActive = true;
@@ -37,7 +38,7 @@ public class PlayerManager : MonoBehaviour{
             Setup2D();
             is2DActive = true;
         }
-        yield return new WaitForSeconds(tDuration);
+        yield return null;
         isTransitioning = false;
     }
 
@@ -53,10 +54,5 @@ public class PlayerManager : MonoBehaviour{
         oCam.Priority = 9;
         player2D.enabled = false;
         playerTopDown.enabled = true;
-    }
-
-
-
-
-    
+    }    
 }
