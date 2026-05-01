@@ -1,4 +1,3 @@
-﻿<Solution>
   <Project Path="Unity.Cinemachine.Editor.csproj" />
   <Project Path="Unity.Cinemachine.csproj" />
   <Project Path="Tripolygon.UModelerX.PureCode.Editor.csproj" />
@@ -6,3 +5,4 @@
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Tripolygon.UModelerX.Runtime.PureCode.csproj" />
 </Solution>
+<Solution>
