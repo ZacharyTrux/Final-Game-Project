@@ -9,8 +9,6 @@ public class Player2D : MonoBehaviour
     public float jumpForce = 7f;
 
     [Header("Detection")]
-    public LayerMask groundLayer;
-    public LayerMask pickupLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
 
@@ -40,14 +38,24 @@ public class Player2D : MonoBehaviour
     }
 
     private void OnJumpPerformed(InputAction.CallbackContext context){
-        if (isGrounded){
+        print(isGrounded);
+        if(isGrounded){
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        }
+    }
+
+    private void OnInteractPerformed(InputAction.CallbackContext context){
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, 0.2f);
+        if(hit != null){
+            print("interactable found");
+            var interactable = GetComponent<IInteractable>();
+            interactable.Interact();
         }
     }
 
     void Update(){
         moveInput = controls.Player.Move.ReadValue<Vector2>();
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer) | Physics.CheckSphere(groundCheck.position, groundCheckRadius, pickupLayer);
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius);
     }
 
     void FixedUpdate(){ // consistent jumping physics
