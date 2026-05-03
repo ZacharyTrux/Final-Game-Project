@@ -16,7 +16,7 @@ public class LevelManager : MonoBehaviour{
     private int currLevel = 0;
     private Player2D player2D;
     private PlayerTopDown playerTD;
-    public Scene nextMajorLevel;
+    public string nextScene;
 
     public static LevelManager Instance {get; private set;}
 
@@ -48,11 +48,11 @@ public class LevelManager : MonoBehaviour{
 
         curr.isCompleted = true;
         currLevel += 1;
-        if(currLevel < 2){
+        if(currLevel <= subLevels.Length - 1){
             SetSubLevel();
         }
         else{
-            SceneManager.SetActiveScene(nextMajorLevel);
+            SceneManager.LoadScene(nextScene);
         }
     }
 

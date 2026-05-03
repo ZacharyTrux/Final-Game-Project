@@ -6,25 +6,45 @@ public class Player2D : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 7f;
-    public float jumpForce = 7f;
+    public float accel = 12;
+    public float decel = 16f;
 
+    [Header("Jump")]
+    public float jumpForce = 14f;
+    public float fallMultiplier = 2.5f;
+    public float lowJumpMultiplier = 2f;
+    public float coyoteTime = 0.1f;
+    public float jumpBufferTime = 0.1f;
 
-    [Header("Detection")]
+    [Header("Wall")]
+    public float wallSpeed = 2f;
+
+    [Header("Checks")]
     public Transform groundCheck;
-    public float groundCheckRadius = 0.2f;
+    public float groundRadius = 0.2f;
+    public Transform wallCheck;
+    public float wallDistance = 0.5f;
+    public LayerMask groundLayer;
+    public LayerMask pickupLayer;
 
+    [Header("Health")]
     public Transform spawnPoint;
-    private int maxHealth = 3;
+    public int maxHealth = 3;
     public int currHealth;
+
     private Rigidbody rb;
     private PlayerInput controls;
-    private Vector2 moveInput;
+    private float moveInput;
+    private bool jumpPressed;
+    private float coyoteTimer;
+    private float jumpBufferTimer;
     private bool isGrounded;
+    private bool isTouchingWall;
 
     void Awake(){
-        currHealth = maxHealth;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        currHealth = maxHealth;
         controls = new PlayerInput();
     }
 
@@ -33,7 +53,6 @@ public class Player2D : MonoBehaviour
         controls.Player.Enable();
         controls.Player.Jump.performed += OnJumpPerformed;
         controls.Player.Interact.performed += OnInteractPerformed;
-        Debug.Log("Subscribed to Interact: " + controls.Player.Interact.bindings.Count + " bindings");
     }
 
     void OnDisable(){
@@ -41,36 +60,100 @@ public class Player2D : MonoBehaviour
         controls.Player.Jump.performed -= OnJumpPerformed;
         controls.Player.Interact.performed -= OnInteractPerformed;
         controls.Player.Disable();
-        moveInput = Vector2.zero;
-        rb.linearVelocity = Vector2.zero;
+        moveInput = 0f;
+        rb.linearVelocity = Vector3.zero;
     }
 
     private void OnJumpPerformed(InputAction.CallbackContext context){
-        print(isGrounded);
-        if(isGrounded){
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        }
+        jumpPressed = true;
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context){
-        print("hit interact");
         Collider[] hits = Physics.OverlapSphere(transform.position, 0.2f);
         
         if(hits.Length > 0){
-            print("interactable found");
             var interactable = hits[0].GetComponent<IInteractable>();
             interactable?.Interact();
         }
     }
 
     void Update(){
-        moveInput = controls.Player.Move.ReadValue<Vector2>();
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius);
+        moveInput = controls.Player.Move.ReadValue<Vector2>().x;
+        CheckEnvironment();
+        HandleTimers();
+        HandleJump();
+        jumpPressed = false;
     }
 
     void FixedUpdate(){ // consistent jumping physics
-        rb.linearVelocity = new Vector3(moveInput.x * moveSpeed, rb.linearVelocity.y, 0f);
-        rb.linearVelocity += Vector3.up * Physics.gravity.y * (1.5f) * Time.fixedDeltaTime;
+        HandleMovement();
+        HandleGravity();
+        HandleWallSlide();
+    }
+
+    private void CheckEnvironment(){
+        LayerMask ground = groundLayer | pickupLayer;
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, ground);
+        Vector3 facingDir = new Vector3(Mathf.Sign(transform.localScale.x), 0, 0);
+        isTouchingWall = Physics.Raycast(wallCheck.position, facingDir, wallDistance);
+    }
+
+    private void HandleTimers(){
+        if(isGrounded){
+            coyoteTimer = coyoteTime;
+        }
+        else{
+            coyoteTimer -= Time.deltaTime;
+        }
+
+        if(jumpPressed){
+            jumpBufferTimer = jumpBufferTime;
+        }
+        else{
+            jumpBufferTimer -= Time.deltaTime;
+        }
+    }
+
+    private void HandleMovement(){
+        float targetSpeed = moveInput * moveSpeed;
+
+        if(isTouchingWall){
+            targetSpeed = 0f;
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+        }
+
+        float speedDiff = targetSpeed - rb.linearVelocity.x;
+        float accelRate = (Mathf.Abs(targetSpeed) > 0.1f) ? accel : decel;
+        rb.AddForce(Vector3.right * speedDiff * accelRate);
+
+        if (moveInput != 0f){
+            transform.localScale = new Vector3(Mathf.Sign(moveInput) * 3f, 3f, 1f);
+        }
+    }
+
+    private void HandleJump(){
+        if(jumpBufferTimer > 0 && coyoteTimer > 0){
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
+            jumpBufferTimer = 0;
+            coyoteTimer = 0;
+        }
+    }
+
+    void HandleGravity(){
+        if (isTouchingWall && !isGrounded) return; // wall slide handles this
+
+        float yVel = rb.linearVelocity.y;
+
+        if (yVel < 0)
+            rb.AddForce(Vector3.up * Physics.gravity.y * (fallMultiplier - 1f), ForceMode.Acceleration);
+        else if (yVel > 0)
+            rb.AddForce(Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1f), ForceMode.Acceleration);
+    }
+
+    private void HandleWallSlide(){
+        if(isTouchingWall && !isGrounded && rb.linearVelocity.y < 0){
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, -wallSpeed, 0f);
+        }
     }
 
     public void TakeDamage(){

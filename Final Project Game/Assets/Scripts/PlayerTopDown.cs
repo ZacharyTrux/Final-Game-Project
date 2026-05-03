@@ -21,47 +21,52 @@ public class PlayerTopDown : MonoBehaviour{
     private Rigidbody rb;
     private PlayerInput controls;
     private Vector2 moveInput;
-    private GameObject heldBox;
+    private GameObject heldItem;
+    private Quaternion heldItemRotation;
+    private float heldItemZ;
     
 
     void Awake(){
         rb = GetComponent<Rigidbody>();
-        controls = new PlayerInput();
         rb.useGravity = false;
         rb.freezeRotation = true;
-        heldBox = null;
+        controls = new PlayerInput();
+        heldItem = null;
         currHealth = maxHealth;
     }
 
-    void OnEnable(){
+    private void OnEnable(){
         controls.Enable();
         controls.Player.Interact.performed += OnInteractPerformed;
     } 
-    void OnDisable(){
+    private void OnDisable(){
         controls.Player.Disable();
         controls.Player.Interact.performed -= OnInteractPerformed;
-        moveInput = Vector2.zero;
         rb.linearVelocity = Vector3.zero;
     }
 
-    void Update(){
+    private void Update(){
         moveInput = controls.Player.Move.ReadValue<Vector2>();
         HandleRotation();
+
+        if(heldItem != null){
+            heldItem.transform.localRotation = Quaternion.identity;
+        }
     }
 
-    void FixedUpdate(){
-            rb.linearVelocity = new Vector3(moveInput.x * moveSpeed, moveInput.y * moveSpeed, 0f);
+    private void FixedUpdate(){
+        rb.linearVelocity = new Vector3(moveInput.x * moveSpeed, moveInput.y * moveSpeed, 0f);
     }
 
     private void HandleRotation(){
         if(moveInput == Vector2.zero) return;
         Vector3 moveDir = new Vector3(moveInput.x, moveInput.y, 0f);
-        Quaternion tRotation = Quaternion.LookRotation(Vector3.forward, moveDir);
-        transform.rotation = Quaternion.Slerp(transform.rotation, tRotation, 20 * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.forward, moveDir), 20 * Time.deltaTime);
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context){
-        if(heldBox == null){
+        print("pressed button");
+        if(heldItem == null){
             TryPickUp();
         }
         else{
@@ -70,39 +75,35 @@ public class PlayerTopDown : MonoBehaviour{
     }
 
     void TryPickUp(){
-        Collider[] hits = Physics.OverlapSphere(transform.position, pickupRange, boxLayer);
-        if(hits.Length == 0){
-        // Try without layer mask to see if box is on wrong layer
-        Collider[] allHits = Physics.OverlapSphere(transform.position, pickupRange);
-        Debug.Log($"Without layer mask hit {allHits.Length} colliders");
-        foreach(Collider h in allHits){
-            Debug.Log($"Found: {h.gameObject.name} on layer {LayerMask.LayerToName(h.gameObject.layer)}");
-        }
-        return;
-    }
+        Collider[] objects = Physics.OverlapSphere(transform.position, pickupRange, boxLayer);
+        if(objects.Length == 0) return;
 
         Collider closest = null;
         float closestDist = Mathf.Infinity;
-        foreach(Collider hit in hits){
-            if(hit.gameObject == gameObject) continue;
-            float dist = Vector3.Distance(transform.position, hit.transform.position);
+        foreach(Collider obj in objects){
+            float dist = Vector3.Distance(transform.position, obj.transform.position);
             if(dist < closestDist){
                 closestDist = dist;
-                closest = hit;
+                closest = obj;
             }
         }
 
-        heldBox = closest.gameObject;
-        heldBox.transform.SetParent(holdLocation);
-        heldBox.transform.localPosition = Vector3.zero;
-        heldBox.transform.localRotation = Quaternion.identity;
+        // store original info on item
+        heldItem = closest.gameObject;
+        heldItemRotation = heldItem.transform.rotation;
+        heldItemZ = heldItem.transform.position.z;
+
+        heldItem.GetComponent<Collider>().enabled = false;
+        heldItem.transform.SetParent(holdLocation);
+        heldItem.transform.localPosition = Vector3.zero;
     }
 
-    void Drop(){
-        heldBox.transform.SetParent(null);
-        Vector3 targetPos = placeLocation.position;
-        heldBox.transform.position = targetPos;
-        heldBox = null;
+    public void Drop(){
+        heldItem.GetComponent<Collider>().enabled = true;
+        heldItem.transform.SetParent(null);
+        heldItem.transform.position = new Vector3(placeLocation.position.x, placeLocation.position.y, heldItemZ);
+        heldItem.transform.rotation = heldItemRotation;
+        heldItem = null;
     }
 
     public void TakeDamage(){
@@ -114,12 +115,15 @@ public class PlayerTopDown : MonoBehaviour{
     }
 
     public void Respawn(){
-        rb.linearVelocity = Vector3.zero;
         transform.position = spawnPoint.position;
     }
 
     public void SetSpawn(Transform position){
         spawnPoint = position;
+    }
+
+    public GameObject GetHeldItem(){
+        return heldItem;
     }
 }
 

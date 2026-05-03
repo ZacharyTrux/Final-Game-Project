@@ -162,7 +162,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4506834455377767034}
   - component: {fileID: 5139587740784647587}
-  - component: {fileID: 2951468572636552665}
   - component: {fileID: 2407856027450944263}
   m_Layer: 8
   m_Name: TopDownPlayer
@@ -203,38 +202,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTopDown
   moveSpeed: 10
   pickupRange: 1.5
+  currHealth: 0
   boxLayer:
     serializedVersion: 2
     m_Bits: 512
   holdLocation: {fileID: 8194377000407951299}
   placeLocation: {fileID: 2591007976625187780}
---- !u!54 &2951468572636552665
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7622062799624219668}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 120
-  m_CollisionDetection: 1
+  spawnPoint: {fileID: 0}
 --- !u!65 &2407856027450944263
 BoxCollider:
   m_ObjectHideFlags: 0

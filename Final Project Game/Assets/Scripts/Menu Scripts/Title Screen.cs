@@ -2,14 +2,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class TitleScreen : MonoBehaviour{
-    public Scene firstLevel;
-
     public void Start(){
         Cursor.visible = true;
     }
 
     public void StartGame(){
-        SceneManager.SetActiveScene(firstLevel);
+        SceneManager.LoadScene("Forest Level");
         Cursor.visible = false;
     }
 
