@@ -2,6 +2,6 @@ public interface IInteractable{
     void Interact();
 } 
 
-public interface IAction{
+public interface IExecute{
     void Execute();
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LevelScript : MonoBehaviour{
+public class LevelScript : MonoBehaviour, IExecute{
     public GameObject tree;
     public GameObject waterfall;
     public GameObject bigTree;
@@ -20,4 +20,4 @@ public class LevelScript : MonoBehaviour{
     {
         
     }
-}
+}    

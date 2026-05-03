@@ -5,6 +5,10 @@ using System.Collections;
 public class PlayerTopDown : MonoBehaviour{
     public float moveSpeed = 5f;
     public float pickupRange = 1.5f;
+
+    private int maxHealth = 3;
+    public int currHealth;
+
     
     // layers
     public LayerMask boxLayer;
@@ -12,9 +16,8 @@ public class PlayerTopDown : MonoBehaviour{
     public Transform holdLocation;
     public Transform placeLocation;
 
-    public Grid grid;
-
-    private bool isMoving;
+    public Transform spawnPoint;
+    
     private Rigidbody rb;
     private PlayerInput controls;
     private Vector2 moveInput;
@@ -25,56 +28,45 @@ public class PlayerTopDown : MonoBehaviour{
         rb = GetComponent<Rigidbody>();
         controls = new PlayerInput();
         rb.useGravity = false;
+        rb.freezeRotation = true;
         heldBox = null;
-        //rb.constraints = RigidbodyConstraints.FreezeRotationX;
+        currHealth = maxHealth;
     }
 
-    void OnEnable() => controls.Enable();
+    void OnEnable(){
+        controls.Enable();
+        controls.Player.Interact.performed += OnInteractPerformed;
+    } 
     void OnDisable(){
         controls.Player.Disable();
+        controls.Player.Interact.performed -= OnInteractPerformed;
         moveInput = Vector2.zero;
         rb.linearVelocity = Vector3.zero;
     }
 
     void Update(){
         moveInput = controls.Player.Move.ReadValue<Vector2>();
-
-        if (!isMoving && moveInput != Vector2.zero){
-            Vector2 gridPos = SnapToCell(moveInput);
-            Vector3Int currentCell = grid.WorldToCell(transform.position);
-            Vector3Int targetCell = currentCell + new Vector3Int((int)gridPos.x, (int)gridPos.y);
-            Vector3 targetPos = grid.GetCellCenterWorld(targetCell);
-            targetPos.z = transform.position.z;
-            StartCoroutine(MoveToCell(targetPos));
-        }
-
-        if(controls.Player.Interact.WasPressedThisFrame()){
-            if(heldBox == null){
-                TryPickUp();
-            }
-            else{
-                Drop();
-            }
-        }
+        HandleRotation();
     }
 
-    Vector2 SnapToCell(Vector2 input){
-        if(Mathf.Abs(input.x) >= Mathf.Abs(input.y)){
-            return new Vector2(Mathf.Sign(input.x), 0);
+    void FixedUpdate(){
+            rb.linearVelocity = new Vector3(moveInput.x * moveSpeed, moveInput.y * moveSpeed, 0f);
+    }
+
+    private void HandleRotation(){
+        if(moveInput == Vector2.zero) return;
+    Vector3 moveDir = new Vector3(moveInput.x, moveInput.y, 0f);
+    Quaternion tRotation = Quaternion.LookRotation(Vector3.forward, moveDir);
+    transform.rotation = Quaternion.Slerp(transform.rotation, tRotation, 20 * Time.deltaTime);
+    }
+
+    private void OnInteractPerformed(InputAction.CallbackContext context){
+        if(heldBox == null){
+            TryPickUp();
         }
         else{
-            return new Vector2(0, Mathf.Sign(input.y));
+            Drop();
         }
-    }
-
-    IEnumerator MoveToCell(Vector3 cell){
-        isMoving = true;
-        while(Vector3.Distance(transform.position, cell) > 0.01f){
-            transform.position = Vector3.MoveTowards(transform.position, cell, moveSpeed * Time.deltaTime);
-            yield return null;
-        }
-        transform.position = cell;
-        isMoving = false;
     }
 
     void TryPickUp(){
@@ -94,8 +86,21 @@ public class PlayerTopDown : MonoBehaviour{
         heldBox = null;
     }
 
-    void FixedUpdate(){
-        rb.linearVelocity = moveInput * moveSpeed;
+    public void TakeDamage(){
+        currHealth -= 1;
+        if(currHealth < 0){
+            return;
+        }
+        Respawn();
+    }
+
+    public void Respawn(){
+        rb.linearVelocity = Vector3.zero;
+        transform.position = spawnPoint.position;
+    }
+
+    public void SetSpawn(Transform position){
+        spawnPoint = position;
     }
 }
 

@@ -14,12 +14,10 @@ public class LeverScript : MonoBehaviour, IInteractable{
 
     public void Interact(){
         if(!isMultiUse && isUsed) return;
-        print("Action performed");
         
         isUsed = true;
-        
         foreach(var action in linkedActions){
-            var executable = GetComponent<IAction>();
+            var executable = action.GetComponent<IExecute>();
             executable.Execute();
         }
     }
