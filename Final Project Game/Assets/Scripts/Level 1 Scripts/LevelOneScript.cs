@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LevelScript : MonoBehaviour, IExecute{
+public class LevelOneScript : MonoBehaviour, IExecute{
     public GameObject tree;
     public GameObject waterfall;
     public GameObject bigTree;
@@ -12,6 +12,7 @@ public class LevelScript : MonoBehaviour, IExecute{
     }
 
     public void Execute(){
+        print("Waterfall gone");
         waterfall.SetActive(false);
     }
 

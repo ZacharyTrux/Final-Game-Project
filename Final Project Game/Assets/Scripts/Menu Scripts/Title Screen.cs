@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TitleScreen{
+public class TitleScreen : MonoBehaviour{
     public Scene firstLevel;
 
     public void Start(){

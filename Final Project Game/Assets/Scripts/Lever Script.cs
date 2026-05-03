@@ -17,6 +17,7 @@ public class LeverScript : MonoBehaviour, IInteractable{
         
         isUsed = true;
         foreach(var action in linkedActions){
+            print("action executed");
             var executable = action.GetComponent<IExecute>();
             executable.Execute();
         }

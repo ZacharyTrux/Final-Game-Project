@@ -4,7 +4,7 @@ using System.Collections;
 
 public class PlayerTopDown : MonoBehaviour{
     public float moveSpeed = 5f;
-    public float pickupRange = 1.5f;
+    public float pickupRange = 10f;
 
     private int maxHealth = 3;
     public int currHealth;
@@ -55,9 +55,9 @@ public class PlayerTopDown : MonoBehaviour{
 
     private void HandleRotation(){
         if(moveInput == Vector2.zero) return;
-    Vector3 moveDir = new Vector3(moveInput.x, moveInput.y, 0f);
-    Quaternion tRotation = Quaternion.LookRotation(Vector3.forward, moveDir);
-    transform.rotation = Quaternion.Slerp(transform.rotation, tRotation, 20 * Time.deltaTime);
+        Vector3 moveDir = new Vector3(moveInput.x, moveInput.y, 0f);
+        Quaternion tRotation = Quaternion.LookRotation(Vector3.forward, moveDir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, tRotation, 20 * Time.deltaTime);
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context){
@@ -71,12 +71,31 @@ public class PlayerTopDown : MonoBehaviour{
 
     void TryPickUp(){
         Collider[] hits = Physics.OverlapSphere(transform.position, pickupRange, boxLayer);
-        if(hits.Length > 0){
-            heldBox = hits[0].gameObject;
-            heldBox.transform.SetParent(holdLocation); // have object move with player 
-            heldBox.transform.localPosition = Vector3.zero;
-            heldBox.transform.rotation = Quaternion.identity;
+        if(hits.Length == 0){
+        // Try without layer mask to see if box is on wrong layer
+        Collider[] allHits = Physics.OverlapSphere(transform.position, pickupRange);
+        Debug.Log($"Without layer mask hit {allHits.Length} colliders");
+        foreach(Collider h in allHits){
+            Debug.Log($"Found: {h.gameObject.name} on layer {LayerMask.LayerToName(h.gameObject.layer)}");
         }
+        return;
+    }
+
+        Collider closest = null;
+        float closestDist = Mathf.Infinity;
+        foreach(Collider hit in hits){
+            if(hit.gameObject == gameObject) continue;
+            float dist = Vector3.Distance(transform.position, hit.transform.position);
+            if(dist < closestDist){
+                closestDist = dist;
+                closest = hit;
+            }
+        }
+
+        heldBox = closest.gameObject;
+        heldBox.transform.SetParent(holdLocation);
+        heldBox.transform.localPosition = Vector3.zero;
+        heldBox.transform.localRotation = Quaternion.identity;
     }
 
     void Drop(){
