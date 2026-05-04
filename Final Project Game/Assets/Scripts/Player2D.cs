@@ -1,9 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 [RequireComponent(typeof(Rigidbody))]
+
 public class Player2D : MonoBehaviour
-{
+{   
+    [Header("Visual")]
+    [SerializeField] private Transform visualModel;
+    [SerializeField] private float frontDelay = 0.15f;
+
+    private float lastMoveTime;
+
+
     [Header("Movement Settings")]
     public float moveSpeed = 7f;
     public float accel = 12;
@@ -94,7 +103,7 @@ public class Player2D : MonoBehaviour
     private void CheckEnvironment(){
         LayerMask ground = groundLayer | pickupLayer;
         isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, ground);
-        Vector3 facingDir = new Vector3(Mathf.Sign(transform.localScale.x), 0, 0);
+        Vector3 facingDir = transform.right;
         isTouchingWall = Physics.Raycast(wallCheck.position, facingDir, wallDistance);
     }
 
@@ -126,8 +135,19 @@ public class Player2D : MonoBehaviour
         float accelRate = (Mathf.Abs(targetSpeed) > 0.1f) ? accel : decel;
         rb.AddForce(Vector3.right * speedDiff * accelRate);
 
-        if (moveInput != 0f){
-            transform.localScale = new Vector3(Mathf.Sign(moveInput) * 3f, 3f, 1f);
+        if (moveInput > 0.01f)
+        {
+            visualModel.localRotation = Quaternion.Euler(0f, -90f, 0f);
+            lastMoveTime = Time.time;
+        }
+        else if (moveInput < -0.01f)
+        {
+            visualModel.localRotation = Quaternion.Euler(0f, 90f, 0f);
+            lastMoveTime = Time.time;
+        }
+        else if (Time.time - lastMoveTime > frontDelay)
+        {
+            visualModel.localRotation = Quaternion.Euler(0f, 180f, 0f);
         }
     }
 
