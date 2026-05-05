@@ -58,9 +58,19 @@ public class PlayerTopDown : MonoBehaviour{
     }
 
     private void HandleRotation(){
-        if(moveInput == Vector2.zero) return;
+        if (moveInput == Vector2.zero) return;
+
         Vector3 moveDir = new Vector3(moveInput.x, moveInput.y, 0f);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.forward, moveDir), 20 * Time.deltaTime);
+
+        Quaternion targetRotation =
+            Quaternion.LookRotation(Vector3.forward, moveDir) *
+            Quaternion.Euler(0f, 0f, 180f);
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            20f * Time.deltaTime
+        );
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context){
