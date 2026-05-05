@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Lose Screen.unity
     guid: 8ceb14ca6bff71a4994692e87260e11c
   - enabled: 1
-    path: Assets/Scenes/Mountain Level.unity
+    path: Assets/Scenes/Mountain Level/Mountain Level.unity
     guid: 106fedfe7110b024c8e740c5359ae647
   - enabled: 1
     path: Assets/Scenes/Temple Level.unity
