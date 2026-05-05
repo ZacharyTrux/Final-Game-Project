@@ -3,13 +3,18 @@ using UnityEngine.SceneManagement;
 
 
 public class VictoryScreen : MonoBehaviour{
-    public Scene title;
-    public Scene levelOne;
+    public string title = "Title Screen";
+    public string levelOne = "Forest Level";
+
+    private void Start(){
+        Cursor.visible = true;
+    }
+
     public void Restart(){
-        SceneManager.SetActiveScene(levelOne);
+        SceneManager.LoadScene(levelOne);
     }
 
     public void MainMenu(){
-        SceneManager.SetActiveScene(title);
+        SceneManager.LoadScene(title);
     }
 }

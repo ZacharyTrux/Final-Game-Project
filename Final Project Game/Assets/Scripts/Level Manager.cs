@@ -37,8 +37,7 @@ public class LevelManager : MonoBehaviour{
     public void SetSubLevel(){
         player2D.SetSpawn(subLevels[currLevel].spawnPoint2D);
         playerTD.SetSpawn(subLevels[currLevel].spawnPointTD);
-        player2D.Respawn();
-        playerTD.Respawn();
+        PlayerManager.Instance.GroupRespawn();
     }
 
     public void CompleteCurrSublevel(){
@@ -52,6 +51,9 @@ public class LevelManager : MonoBehaviour{
             SetSubLevel();
         }
         else{
+            if(nextScene == "Victory"){
+                Destroy(UIScript.Instance.gameObject);
+            }
             SceneManager.LoadScene(nextScene);
         }
     }

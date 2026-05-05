@@ -11,7 +11,7 @@ public class Player2D : MonoBehaviour
     [SerializeField] private float frontDelay = 0.15f;
 
     private float lastMoveTime;
-
+    public PlayerManager pmInstance;
 
     [Header("Movement Settings")]
     public float moveSpeed = 7f;
@@ -177,16 +177,7 @@ public class Player2D : MonoBehaviour
     }
 
     public void TakeDamage(){
-        currHealth -= 1;
-        if(currHealth < 0){
-            return;
-        }
-        Respawn();
-    }
-
-    public void Respawn(){
-        rb.linearVelocity = Vector3.zero;
-        transform.position = spawnPoint.position;
+        PlayerManager.Instance.TakeDamage();
     }
 
     public void SetSpawn(Transform position){

@@ -15,7 +15,6 @@ public class PlayerTopDown : MonoBehaviour{
     // placement locations
     public Transform holdLocation;
     public Transform placeLocation;
-
     public Transform spawnPoint;
     
     private Rigidbody rb;
@@ -23,7 +22,7 @@ public class PlayerTopDown : MonoBehaviour{
     private Vector2 moveInput;
     private GameObject heldItem;
     private Quaternion heldItemRotation;
-    private float heldItemZ;
+    private float heldItemZ; 
     
 
     void Awake(){
@@ -107,15 +106,7 @@ public class PlayerTopDown : MonoBehaviour{
     }
 
     public void TakeDamage(){
-        currHealth -= 1;
-        if(currHealth < 0){
-            return;
-        }
-        Respawn();
-    }
-
-    public void Respawn(){
-        transform.position = spawnPoint.position;
+        PlayerManager.Instance.TakeDamage();
     }
 
     public void SetSpawn(Transform position){
