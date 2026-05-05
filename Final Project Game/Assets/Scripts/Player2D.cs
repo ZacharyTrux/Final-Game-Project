@@ -152,6 +152,12 @@ public class Player2D : MonoBehaviour
     }
 
     private void HandleJump(){
+        if (jumpPressed)
+        {
+            Debug.Log("Jump pressed. isGrounded=" + isGrounded + 
+                    " coyoteTimer=" + coyoteTimer + 
+                    " jumpBufferTimer=" + jumpBufferTimer);
+        }
         if(jumpBufferTimer > 0 && coyoteTimer > 0){
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
             jumpBufferTimer = 0;
@@ -182,5 +188,23 @@ public class Player2D : MonoBehaviour
 
     public void SetSpawn(Transform position){
         spawnPoint = position;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
+        }
+
+        if (wallCheck != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(
+                wallCheck.position,
+                wallCheck.position + transform.right * wallDistance
+            );
+        }
     }
 }
