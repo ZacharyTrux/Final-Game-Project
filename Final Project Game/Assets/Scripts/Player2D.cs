@@ -4,15 +4,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 
-public class Player2D : MonoBehaviour
-{   
-    [Header("Visual")]
-    [SerializeField] private Transform visualModel;
-    [SerializeField] private float frontDelay = 0.15f;
-
-    private float lastMoveTime;
-    public PlayerManager pmInstance;
-
+public class Player2D : MonoBehaviour{   
     [Header("Movement Settings")]
     public float moveSpeed = 7f;
     public float accel = 12;
@@ -58,6 +50,8 @@ public class Player2D : MonoBehaviour
     }
 
     void OnEnable(){
+        GetComponent<BoxCollider>().enabled = true;
+        GetComponentInChildren<SpriteRenderer>().color = new Color(1f,1f,1f, 1f);
         rb.useGravity = true;
         controls.Player.Enable();
         controls.Player.Jump.performed += OnJumpPerformed;
@@ -65,6 +59,8 @@ public class Player2D : MonoBehaviour
     }
 
     void OnDisable(){
+        GetComponent<BoxCollider>().enabled = false;
+        GetComponentInChildren<SpriteRenderer>().color = new Color(1f,1f,1f, 0.5f);
         rb.useGravity = false;
         controls.Player.Jump.performed -= OnJumpPerformed;
         controls.Player.Interact.performed -= OnInteractPerformed;
@@ -126,29 +122,16 @@ public class Player2D : MonoBehaviour
     private void HandleMovement(){
         float targetSpeed = moveInput * moveSpeed;
 
+        /*
         if(isTouchingWall){
             targetSpeed = 0f;
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
         }
+        */
 
         float speedDiff = targetSpeed - rb.linearVelocity.x;
         float accelRate = (Mathf.Abs(targetSpeed) > 0.1f) ? accel : decel;
         rb.AddForce(Vector3.right * speedDiff * accelRate);
-
-        if (moveInput > 0.01f)
-        {
-            visualModel.localRotation = Quaternion.Euler(0f, -90f, 0f);
-            lastMoveTime = Time.time;
-        }
-        else if (moveInput < -0.01f)
-        {
-            visualModel.localRotation = Quaternion.Euler(0f, 90f, 0f);
-            lastMoveTime = Time.time;
-        }
-        else if (Time.time - lastMoveTime > frontDelay)
-        {
-            visualModel.localRotation = Quaternion.Euler(0f, 180f, 0f);
-        }
     }
 
     private void HandleJump(){
