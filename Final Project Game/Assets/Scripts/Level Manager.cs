@@ -7,6 +7,7 @@ public class LevelManager : MonoBehaviour{
     [System.Serializable]
     public class SubLevel{
         public string name;
+        public GameObject subLevelObjects;
         public Transform spawnPoint2D;
         public Transform spawnPointTD;
         public bool isCompleted;
@@ -16,7 +17,7 @@ public class LevelManager : MonoBehaviour{
     private int currLevel = 0;
     private Player2D player2D;
     private PlayerTopDown playerTD;
-    public string nextScene;
+    private bool isTransitioning = false;
 
     public static LevelManager Instance {get; private set;}
 
@@ -38,24 +39,31 @@ public class LevelManager : MonoBehaviour{
         player2D.SetSpawn(subLevels[currLevel].spawnPoint2D);
         playerTD.SetSpawn(subLevels[currLevel].spawnPointTD);
         PlayerManager.Instance.GroupRespawn();
+        PlayerManager.Instance.Setup2D();
     }
 
     public void CompleteCurrSublevel(){
+        if(isTransitioning) return;
+
         SubLevel curr = subLevels[currLevel];
-        
         if(curr.isCompleted) return;
 
+        isTransitioning = true;
         curr.isCompleted = true;
+        curr.subLevelObjects.SetActive(false);
         currLevel += 1;
         if(currLevel <= subLevels.Length - 1){
             SetSubLevel();
+            Invoke(nameof(ResetTransition), 0.5f);
         }
         else{
-            if(nextScene == "Victory"){
-                Destroy(UIScript.Instance.gameObject);
-            }
-            SceneManager.LoadScene(nextScene);
+            Destroy(UIScript.Instance.gameObject);
+            SceneManager.LoadScene("Victory Screen");
         }
+    }
+
+    private void ResetTransition(){
+        isTransitioning = false;
     }
 
 }

@@ -64,14 +64,14 @@ public class PlayerManager : MonoBehaviour{
         isTransitioning = false;
     }
 
-    private void Setup2D(){
+    public void Setup2D(){
         oCam.Priority = 11;
         pCam.Priority = 9;
         player2D.enabled = true;
         playerTopDown.enabled = false;
     }
 
-    private void SetupTopDown(){
+    public void SetupTopDown(){
         pCam.Priority = 11;
         oCam.Priority = 9;
         player2D.enabled = false;

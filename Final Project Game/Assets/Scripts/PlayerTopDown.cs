@@ -35,10 +35,12 @@ public class PlayerTopDown : MonoBehaviour{
     }
 
     private void OnEnable(){
+        GetComponent<BoxCollider>().enabled = true;
         controls.Enable();
         controls.Player.Interact.performed += OnInteractPerformed;
     } 
     private void OnDisable(){
+        GetComponent<BoxCollider>().enabled = false;
         controls.Player.Disable();
         controls.Player.Interact.performed -= OnInteractPerformed;
         rb.linearVelocity = Vector3.zero;
