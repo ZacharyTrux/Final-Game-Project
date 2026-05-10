@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3982015698875457194}
   - component: {fileID: 3814223522315786378}
   - component: {fileID: 2144059288434311884}
+  - component: {fileID: 7095204300604247568}
   m_Layer: 0
   m_Name: Watermelon
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 3501037576392469473}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.32407, y: 11.83946, z: -30.2}
+  m_LocalPosition: {x: -2.32407, y: 11.83946, z: -21.5}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -111,5 +112,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 0.2}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 0.6308945}
+  m_Center: {x: 0, y: 0, z: -0.21544723}
+--- !u!114 &7095204300604247568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3501037576392469473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e9c74e56d2c841fc9d99eec02505e69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollectableItems
+  scoreAmount: 100
+  playerLayers:
+    serializedVersion: 2
+    m_Bits: 128

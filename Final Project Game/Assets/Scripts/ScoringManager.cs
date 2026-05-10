@@ -2,7 +2,7 @@ using UnityEngine;
 using HighScore;
 using TMPro;
 
-public class ScoringSystem : MonoBehaviour
+public class ScoringManager : MonoBehaviour
 {
     private int currScore;
     private string playerName;
@@ -10,7 +10,7 @@ public class ScoringSystem : MonoBehaviour
 
     public TextMeshProUGUI scoreText;
 
-    public static ScoringSystem Instance { get; private set; }
+    public static ScoringManager Instance { get; private set; }
 
     private void Awake()
     {
@@ -62,8 +62,7 @@ public class ScoringSystem : MonoBehaviour
         }
     }
 
-    public void SetPlayerName()
-    {
-
+    public void SetPlayerName(string name){
+        this.playerName = name;
     }
 }
