@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 
 [RequireComponent(typeof(Rigidbody))]
@@ -145,6 +146,18 @@ public class Player2D : MonoBehaviour{
 
     public void SetSpawn(Transform position){
         spawnPoint = position;
+    }
+
+    public void HandleDrowning(){
+        StartCoroutine(DrowningCoroutine());
+    }
+
+    IEnumerator DrowningCoroutine(){
+        animator.SetTrigger("Drowning");
+        yield return new WaitForSeconds(0.5f);
+        PlayerManager.Instance.TakeDamage();
+        animator.SetTrigger("Idle");
+        gameObject.transform.position = spawnPoint.position;
     }
 
     private void OnDrawGizmosSelected()

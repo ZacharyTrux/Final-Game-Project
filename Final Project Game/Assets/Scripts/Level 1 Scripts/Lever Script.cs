@@ -18,9 +18,10 @@ public class LeverScript : MonoBehaviour, IInteractable{
         if(!isMultiUse && isUsed) return;
         isUsed = true;
         leverAnimator.SetTrigger("On");
+        GetComponent<BoxCollider>().enabled = false;
+        UIScript.Instance.ResetHintText();
         
         foreach(var action in linkedActions){
-            print("action executed");
             var executable = action.GetComponent<IExecute>();
             executable.Execute();
         }

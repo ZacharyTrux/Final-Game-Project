@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 904d5bb95f39fa740a0966d92490f313
+guid: 26501afeefc648e4c9247f3053878fa6
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Bunny Sprite_0
+      name: result (12)_1
       rect:
         serializedVersion: 2
-        x: 64
-        y: 280
-        width: 104
-        height: 200
+        x: 237
+        y: 4
+        width: 43
+        height: 42
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,20 +112,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6283534eba675b54a86808485b67e430
-      internalID: 1374194234
+      spriteID: 71b04e8277799a340bf33899776ac02f
+      internalID: 412631195
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bunny Sprite_1
+      name: result (12)_2
       rect:
         serializedVersion: 2
-        x: 64
-        y: 24
-        width: 112
-        height: 200
+        x: 377
+        y: 9
+        width: 27
+        height: 29
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,8 +134,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 21cabdaafd8371b44bd51b6e61d6752a
-      internalID: -1605551273
+      spriteID: e93879dc4fec0dd4f99327ccd888e40a
+      internalID: 1951927004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: result (12)_3
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 9
+        width: 37
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c0161085af188274b98c784d0608a8d8
+      internalID: -1401522991
       vertices: []
       indices: 
       edges: []
@@ -144,7 +166,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: e0341b5011e8b15409d367f5f387fad6
+    spriteID: 3868c686445501b4b8c7c6e9fac0d99d
     internalID: 0
     vertices: []
     indices: 
@@ -156,8 +178,10 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Bunny Sprite_0: 1374194234
-      Bunny Sprite_1: -1605551273
+      result (12)_0: -1797635637
+      result (12)_1: 412631195
+      result (12)_2: 1951927004
+      result (12)_3: -1401522991
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
