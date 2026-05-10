@@ -7,143 +7,222 @@ public class Ghost2DChase : MonoBehaviour
     [Header("Target")]
     public Transform targetPlayer;
 
-    [Header("Movement")]
+    [Header("Movement - Left / Right Only")]
     public float chaseSpeed = 3f;
-    public float hoverHeight = 1.2f;
-    public float stopDistance = 0.25f;
-
-    [Header("Annoy Player")]
-    public float annoyDistance = 1.2f;
-    public float verticalBobAmount = 0.35f;
-    public float verticalBobSpeed = 4f;
-
-    [Header("Z Movement Test")]
-    public bool allowZMovement = true;
-    public float zOffsetAmount = 2f;
-    public float zMoveSpeed = 2f;
-
-    [Header("Visual")]
-    [Header("Visual")]
-    public Transform visualModel;
-    public float faceRightYRotation = -90f;
-    public float faceLeftYRotation = 90f;
-    public float turnSpeed = 180f; // degrees per second, lower = turn slower
+    public float stopDistanceX = 0.25f;
 
     [Header("Damage Settings")]
-    public int damageAmount = 1;
+    public int scorePenalty = 50;
     public float damageCooldown = 1.5f;
 
+    [Header("Stomp Kill Settings")]
+    public bool canBeStomped = true;
+    public float stompHeightThreshold = 0.15f;
+    public bool destroyOnStomp = true;
+
+    [Header("Stun After Side Hit")]
+    public float stunDuration = 2f;
+
     private Rigidbody rb;
+    private Collider ghostCollider;
+
     private float damageTimer;
+    private bool isStunned;
+    private float stunTimer;
+
+    private float fixedY;
+    private float fixedZ;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        ghostCollider = GetComponent<Collider>();
 
         rb.useGravity = false;
         rb.freezeRotation = true;
+
+        // Lock physics movement so it cannot fly upward/downward or move in Z.
+        rb.constraints =
+            RigidbodyConstraints.FreezePositionY |
+            RigidbodyConstraints.FreezePositionZ |
+            RigidbodyConstraints.FreezeRotationX |
+            RigidbodyConstraints.FreezeRotationY |
+            RigidbodyConstraints.FreezeRotationZ;
+    }
+
+    void Start()
+    {
+        fixedY = transform.position.y;
+        fixedZ = transform.position.z;
     }
 
     void FixedUpdate()
     {
-        if (targetPlayer == null) return;
-
-        Vector3 targetPosition = targetPlayer.position;
-
-        // Ghost chases slightly above the player.
-        targetPosition.y += hoverHeight;
-
-        // Let the ghost move forward/backward on Z to test depth movement.
-        if (allowZMovement)
-        {
-            targetPosition.z += Mathf.Sin(Time.time * zMoveSpeed) * zOffsetAmount;
-        }
-        else
-        {
-            targetPosition.z = transform.position.z;
-        }
-
-        Vector3 currentPosition = rb.position;
-        Vector3 toTarget = targetPosition - currentPosition;
-
-        float distance = toTarget.magnitude;
-
-        if (distance > stopDistance)
-        {
-            Vector3 direction = toTarget.normalized;
-
-            Vector3 nextPosition =
-                currentPosition + direction * chaseSpeed * Time.fixedDeltaTime;
-
-            // When close to player, bob up/down to feel annoying.
-            if (distance < annoyDistance)
-            {
-                nextPosition.y += Mathf.Sin(Time.time * verticalBobSpeed)
-                                * verticalBobAmount
-                                * Time.fixedDeltaTime;
-            }
-
-            rb.MovePosition(nextPosition);
-            RotateVisual(direction);
-        }
-
         damageTimer -= Time.fixedDeltaTime;
-    }
 
-    private void RotateVisual(Vector3 direction)
-    {
-        if (visualModel == null) return;
+        KeepGhostOnLine();
 
-        Quaternion targetRotation;
-
-        if (direction.x > 0.05f)
+        if (isStunned)
         {
-            // Ghost moving right
-            targetRotation = Quaternion.Euler(0f, faceRightYRotation, 0f);
-        }
-        else if (direction.x < -0.05f)
-        {
-            // Ghost moving left
-            targetRotation = Quaternion.Euler(0f, faceLeftYRotation, 0f);
-        }
-        else
-        {
+            UpdateStun();
             return;
         }
 
-        visualModel.localRotation = Quaternion.RotateTowards(
-            visualModel.localRotation,
-            targetRotation,
-            turnSpeed * Time.deltaTime
-        );
+        if (targetPlayer == null) return;
+
+        ChasePlayerLeftRightOnly();
+    }
+
+    private void ChasePlayerLeftRightOnly()
+    {
+        float distanceX = targetPlayer.position.x - rb.position.x;
+
+        if (Mathf.Abs(distanceX) <= stopDistanceX)
+        {
+            rb.linearVelocity = Vector3.zero;
+            return;
+        }
+
+        float directionX = Mathf.Sign(distanceX);
+
+        Vector3 nextPosition = rb.position;
+        nextPosition.x += directionX * chaseSpeed * Time.fixedDeltaTime;
+        nextPosition.y = fixedY;
+        nextPosition.z = fixedZ;
+
+        rb.MovePosition(nextPosition);
+    }
+
+    private void KeepGhostOnLine()
+    {
+        Vector3 pos = rb.position;
+        pos.y = fixedY;
+        pos.z = fixedZ;
+        rb.position = pos;
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+    }
+
+    private void UpdateStun()
+    {
+        stunTimer -= Time.fixedDeltaTime;
+
+        rb.linearVelocity = Vector3.zero;
+
+        if (stunTimer <= 0f)
+        {
+            isStunned = false;
+            Debug.Log("2D Ghost finished stun. Chasing again.");
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        TryDamagePlayer(other);
+        HandlePlayerTouch(other);
     }
 
     private void OnTriggerStay(Collider other)
     {
-        TryDamagePlayer(other);
+        HandlePlayerTouch(other);
     }
 
-    private void TryDamagePlayer(Collider other)
+    private void HandlePlayerTouch(Collider other)
+    {
+        if (!other.CompareTag("2DPlayer")) return;
+
+        // Check stomp FIRST.
+        // If player is above ghost, kill ghost immediately.
+        if (canBeStomped && IsPlayerStompingGhost(other))
+        {
+            KillGhost();
+            return;
+        }
+
+        // If not stomp, then it is side/body hit.
+        DamagePlayerAndStunGhost();
+    }
+
+    private bool IsPlayerStompingGhost(Collider playerCollider)
+    {
+        if (ghostCollider == null) return false;
+
+        Bounds playerBounds = playerCollider.bounds;
+        Bounds ghostBounds = ghostCollider.bounds;
+
+        // Player must be above the ghost center.
+        bool playerIsAboveGhost = playerBounds.center.y > ghostBounds.center.y;
+
+        // Player feet should be near the top half/top area of ghost.
+        bool playerFeetNearGhostTop =
+            playerBounds.min.y >= ghostBounds.center.y;
+
+        // Optional downward check.
+        // If player has Rigidbody and is falling, this helps detect stomp.
+        bool playerMovingDown = true;
+
+        Rigidbody playerRb = playerCollider.GetComponent<Rigidbody>();
+
+        if (playerRb != null)
+        {
+            playerMovingDown = playerRb.linearVelocity.y <= 0.2f;
+        }
+
+        return playerIsAboveGhost && playerFeetNearGhostTop && playerMovingDown;
+    }
+
+    private void DamagePlayerAndStunGhost()
     {
         if (damageTimer > 0f) return;
 
-        if (other.CompareTag("Player") ||
-            other.CompareTag("2DPlayer") ||
-            other.CompareTag("TopDownPlayer"))
+        Debug.Log("2D Player hit ghost from side. Score -50. Ghost stunned.");
+
+        if (PlayerManager.Instance != null)
         {
-            Debug.Log("Ghost touched player.");
+            PlayerManager.Instance.TakeDamage();
+        }
 
-            if (PlayerManager.Instance != null)
-            {
-                PlayerManager.Instance.TakeDamage();
-            }
+        DecreaseScore(scorePenalty);
+        StunGhost();
 
-            damageTimer = damageCooldown;
+        damageTimer = damageCooldown;
+    }
+
+    private void StunGhost()
+    {
+        isStunned = true;
+        stunTimer = stunDuration;
+        rb.linearVelocity = Vector3.zero;
+    }
+
+    private void KillGhost()
+    {
+        Debug.Log("2D Player jumped on ghost. Ghost killed.");
+
+        // Stop ghost from triggering score loss again before it disappears.
+        if (ghostCollider != null)
+        {
+            ghostCollider.enabled = false;
+        }
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
+        Destroy(gameObject);
+    }
+
+    private void DecreaseScore(int amount)
+    {
+        if (ScoringSystem.Instance != null)
+        {
+            ScoringSystem.Instance.AddScore(-amount);
+        }
+        else
+        {
+            Debug.LogWarning("ScoringSystem.Instance is missing. Cannot decrease score.");
         }
     }
 }
