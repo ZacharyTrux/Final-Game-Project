@@ -76,7 +76,6 @@ public class PlayerTopDown : MonoBehaviour{
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context){
-        print("pressed button");
         if(heldItem == null){
             TryPickUp();
         }

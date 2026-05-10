@@ -9,6 +9,7 @@ public class UIScript : MonoBehaviour{
     public GameObject pauseMenu;
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI hintText;
     public static UIScript Instance {get; private set;}
     
     private void Awake(){
@@ -54,6 +55,18 @@ public class UIScript : MonoBehaviour{
         Time.timeScale = 1f;
         SceneManager.LoadScene(titleScreen);
         Destroy(gameObject);
+    }
+
+    public void ShowCompletionPrompt(){
+        hintText.text = "Use [tab] to group up and complete the level!";
+    }
+
+    public void ShowInteractPrompt(){
+        hintText.text = "Press [E] to interact";
+    }
+
+    public void ResetHintText(){
+        hintText.text = "";
     }
 
     

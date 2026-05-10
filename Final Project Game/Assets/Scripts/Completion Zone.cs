@@ -12,7 +12,7 @@ public class CompletionZone : MonoBehaviour{
     }
 
     private void OnTriggerEnter(Collider other){
-        hintText.text = "Use [tab] to group up and complete the level!";
+        UIScript.Instance.ShowCompletionPrompt();
         if(other.GetComponent<PlayerTopDown>() != null){
             presentTD = true;
         }
@@ -27,7 +27,7 @@ public class CompletionZone : MonoBehaviour{
     }
 
     private void OnTriggerExit(Collider other){
-        hintText.text = "";
+        UIScript.Instance.ResetHintText();
         if(other.GetComponent<Player2D>() != null){
             present2D = false;
         }

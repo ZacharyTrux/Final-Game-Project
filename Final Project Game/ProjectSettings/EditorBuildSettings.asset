@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Forest Level.unity
     guid: 730f1942362731042a71e595d394624a
   - enabled: 1
-    path: Assets/Scenes/Victory.unity
+    path: Assets/Scenes/Victory Screen.unity
     guid: 4cbf6ca36dd75dc469d6b30d970fe3a2
   - enabled: 1
     path: Assets/Scenes/Lose Screen.unity
