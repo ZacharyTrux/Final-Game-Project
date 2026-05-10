@@ -20,6 +20,7 @@ public class Player2D : MonoBehaviour{
     public float wallDistance = 0.5f;
     public LayerMask groundLayer;
     public LayerMask pickupLayer;
+    private LayerMask ground;
 
     [Header("Health")]
     public Transform spawnPoint;
@@ -28,16 +29,23 @@ public class Player2D : MonoBehaviour{
     private PlayerInput controls;
     private float moveInput;
     private bool isGrounded;
+    private Animator animator;
+    private SpriteRenderer sprite;
+    private string currAnimation;
+    private bool wasGrounded;
 
     void Awake(){
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         controls = new PlayerInput();
+        ground = groundLayer | pickupLayer;
+        animator = GetComponentInChildren<Animator>();
+        sprite = GetComponentInChildren<SpriteRenderer>();
     }
 
     void OnEnable(){
         GetComponent<BoxCollider>().enabled = true;
-        GetComponentInChildren<SpriteRenderer>().color = new Color(1f,1f,1f, 1f);
+        sprite.color = new Color(1f,1f,1f, 1f);
         rb.useGravity = true;
         controls.Player.Enable();
         controls.Player.Jump.performed += OnJumpPerformed;
@@ -46,7 +54,7 @@ public class Player2D : MonoBehaviour{
 
     void OnDisable(){
         GetComponent<BoxCollider>().enabled = false;
-        GetComponentInChildren<SpriteRenderer>().color = new Color(1f,1f,1f, 0.5f);
+        sprite.color = new Color(1f,1f,1f, 0.5f);
         rb.useGravity = false;
         controls.Player.Jump.performed -= OnJumpPerformed;
         controls.Player.Interact.performed -= OnInteractPerformed;
@@ -57,7 +65,43 @@ public class Player2D : MonoBehaviour{
 
     void Update(){
         moveInput = controls.Player.Move.ReadValue<Vector2>().x;
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundLayer);
+        wasGrounded = isGrounded;
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, ground);
+        HandleAnimation();
+    }
+
+    void HandleAnimation(){
+        if(moveInput > 0){
+            sprite.flipX = false;
+        }
+        else if(moveInput < 0){
+            sprite.flipX = true;
+        }
+
+        if(isGrounded && !wasGrounded){
+            animator.SetTrigger("Landing");
+            currAnimation = "Landing";
+            print("landed");
+            return;
+        }
+
+
+        string newState = "Idle";
+        if(isGrounded){
+            if(moveInput != 0){
+                newState = "Walking";
+            }
+        }
+        else{
+            if(rb.linearVelocity.y > 0.1f){
+                newState = "Jump";
+            }
+        }
+
+        if(newState != currAnimation){
+            animator.SetTrigger(newState);
+            currAnimation = newState;
+        }
     }
 
     void FixedUpdate(){
@@ -96,6 +140,7 @@ public class Player2D : MonoBehaviour{
 
     public void TakeDamage(){
         PlayerManager.Instance.TakeDamage();
+        print("took damage");
     }
 
     public void SetSpawn(Transform position){
