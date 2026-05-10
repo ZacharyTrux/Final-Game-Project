@@ -8,7 +8,9 @@ public class CompletionZone : MonoBehaviour{
     private TextMeshProUGUI hintText;
 
     private void Awake(){
-        hintText = GameObject.FindWithTag("Hint").GetComponent<TextMeshProUGUI>();
+        if(hintText == null){
+            hintText = GameObject.FindWithTag("Hint").GetComponent<TextMeshProUGUI>();
+        }
     }
 
     private void OnTriggerEnter(Collider other){

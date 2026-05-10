@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4101005550168995903}
   - component: {fileID: 4068348368149203565}
   - component: {fileID: 6852379408862247576}
+  - component: {fileID: -9125203971892686934}
   m_Layer: 0
   m_Name: Cherry
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4169170418136837439}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.32407, y: 11.83946, z: -30.2}
+  m_LocalPosition: {x: -2.32407, y: 11.83946, z: -21.5}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -111,5 +112,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.875, y: 0.875, z: 0.2}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.875, y: 0.875, z: 0.38660017}
+  m_Center: {x: 0, y: 0, z: -0.09330004}
+--- !u!114 &-9125203971892686934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4169170418136837439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e9c74e56d2c841fc9d99eec02505e69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollectableItems
+  scoreAmount: 100
+  playerLayers:
+    serializedVersion: 2
+    m_Bits: 128

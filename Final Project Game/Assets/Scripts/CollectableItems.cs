@@ -19,9 +19,9 @@ public class CollectableItems : MonoBehaviour
 
         collected = true;
 
-        if (ScoringSystem.Instance != null)
+        if (ScoringManager.Instance != null)
         {
-            ScoringSystem.Instance.AddScore(scoreAmount);
+            ScoringManager.Instance.AddScore(scoreAmount);
         }
         else
         {
