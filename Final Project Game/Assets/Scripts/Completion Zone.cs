@@ -3,6 +3,7 @@ using UnityEngine;
 public class CompletionZone : MonoBehaviour{
     private bool present2D = false;
     private bool presentTD = false;
+    private bool isCompleted = false;
 
     private void OnTriggerEnter(Collider other){
         if(other.GetComponent<PlayerTopDown>() != null){
@@ -11,7 +12,8 @@ public class CompletionZone : MonoBehaviour{
         if(other.GetComponent<Player2D>() != null){
             present2D = true;
         }
-        if(present2D && presentTD){
+        if(present2D && presentTD && !isCompleted){
+            isCompleted = true;
             LevelManager.Instance.CompleteCurrSublevel();
         }
     }

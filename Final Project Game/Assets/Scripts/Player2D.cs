@@ -4,29 +4,14 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 
-public class Player2D : MonoBehaviour
-{   
-    [Header("Visual")]
-    [SerializeField] private Transform visualModel;
-    [SerializeField] private float frontDelay = 0.15f;
-
-    private float lastMoveTime;
-    public PlayerManager pmInstance;
-
+public class Player2D : MonoBehaviour{   
     [Header("Movement Settings")]
     public float moveSpeed = 7f;
-    public float accel = 12;
-    public float decel = 16f;
 
     [Header("Jump")]
-    public float jumpForce = 14f;
-    public float fallMultiplier = 2.5f;
-    public float lowJumpMultiplier = 2f;
-    public float coyoteTime = 0.1f;
-    public float jumpBufferTime = 0.1f;
-
-    [Header("Wall")]
-    public float wallSpeed = 2f;
+    public float jumpForce = 22f;
+    public float gravityMultiplier = 3f;
+    public float fallMultiplier = 4.5f;
 
     [Header("Checks")]
     public Transform groundCheck;
@@ -38,26 +23,21 @@ public class Player2D : MonoBehaviour
 
     [Header("Health")]
     public Transform spawnPoint;
-    public int maxHealth = 3;
-    public int currHealth;
 
     private Rigidbody rb;
     private PlayerInput controls;
     private float moveInput;
-    private bool jumpPressed;
-    private float coyoteTimer;
-    private float jumpBufferTimer;
     private bool isGrounded;
-    private bool isTouchingWall;
 
     void Awake(){
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-        currHealth = maxHealth;
         controls = new PlayerInput();
     }
 
     void OnEnable(){
+        GetComponent<BoxCollider>().enabled = true;
+        GetComponentInChildren<SpriteRenderer>().color = new Color(1f,1f,1f, 1f);
         rb.useGravity = true;
         controls.Player.Enable();
         controls.Player.Jump.performed += OnJumpPerformed;
@@ -65,6 +45,8 @@ public class Player2D : MonoBehaviour
     }
 
     void OnDisable(){
+        GetComponent<BoxCollider>().enabled = false;
+        GetComponentInChildren<SpriteRenderer>().color = new Color(1f,1f,1f, 0.5f);
         rb.useGravity = false;
         controls.Player.Jump.performed -= OnJumpPerformed;
         controls.Player.Interact.performed -= OnInteractPerformed;
@@ -73,8 +55,34 @@ public class Player2D : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
     }
 
+    void Update(){
+        moveInput = controls.Player.Move.ReadValue<Vector2>().x;
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundLayer);
+    }
+
+    void FixedUpdate(){
+        bool hittingWallRight = moveInput > 0 && Physics.Raycast(wallCheck.position, Vector3.right, wallDistance, groundLayer);
+        bool hittingWallLeft = moveInput < 0 && Physics.Raycast(wallCheck.position, Vector3.left, wallDistance, groundLayer);
+
+        float targetVelocityX = moveInput * moveSpeed;
+
+        if ((hittingWallRight && moveInput > 0) || (hittingWallLeft && moveInput < 0)){
+            targetVelocityX = 0f;
+        }
+        
+        rb.linearVelocity = new Vector3(targetVelocityX, rb.linearVelocity.y, 0f);
+
+        if (!isGrounded){
+            float currentMultiplier = (rb.linearVelocity.y < 0) ? fallMultiplier : gravityMultiplier;
+            rb.AddForce(Physics.gravity * (currentMultiplier - 1f), ForceMode.Acceleration);
+        }
+    }
+
     private void OnJumpPerformed(InputAction.CallbackContext context){
-        jumpPressed = true;
+        if (isGrounded){
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, 0f);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context){
@@ -83,102 +91,6 @@ public class Player2D : MonoBehaviour
         if(hits.Length > 0){
             var interactable = hits[0].GetComponent<IInteractable>();
             interactable?.Interact();
-        }
-    }
-
-    void Update(){
-        moveInput = controls.Player.Move.ReadValue<Vector2>().x;
-        CheckEnvironment();
-        HandleTimers();
-        HandleJump();
-        jumpPressed = false;
-    }
-
-    void FixedUpdate(){ // consistent jumping physics
-        HandleMovement();
-        HandleGravity();
-        HandleWallSlide();
-    }
-
-    private void CheckEnvironment(){
-        LayerMask ground = groundLayer | pickupLayer;
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, ground);
-        Vector3 facingDir = transform.right;
-        isTouchingWall = Physics.Raycast(wallCheck.position, facingDir, wallDistance);
-    }
-
-    private void HandleTimers(){
-        if(isGrounded){
-            coyoteTimer = coyoteTime;
-        }
-        else{
-            coyoteTimer -= Time.deltaTime;
-        }
-
-        if(jumpPressed){
-            jumpBufferTimer = jumpBufferTime;
-        }
-        else{
-            jumpBufferTimer -= Time.deltaTime;
-        }
-    }
-
-    private void HandleMovement(){
-        float targetSpeed = moveInput * moveSpeed;
-
-        if(isTouchingWall){
-            targetSpeed = 0f;
-            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-        }
-
-        float speedDiff = targetSpeed - rb.linearVelocity.x;
-        float accelRate = (Mathf.Abs(targetSpeed) > 0.1f) ? accel : decel;
-        rb.AddForce(Vector3.right * speedDiff * accelRate);
-
-        if (moveInput > 0.01f)
-        {
-            visualModel.localRotation = Quaternion.Euler(0f, -90f, 0f);
-            lastMoveTime = Time.time;
-        }
-        else if (moveInput < -0.01f)
-        {
-            visualModel.localRotation = Quaternion.Euler(0f, 90f, 0f);
-            lastMoveTime = Time.time;
-        }
-        else if (Time.time - lastMoveTime > frontDelay)
-        {
-            visualModel.localRotation = Quaternion.Euler(0f, 180f, 0f);
-        }
-    }
-
-    private void HandleJump(){
-        if (jumpPressed)
-        {
-            Debug.Log("Jump pressed. isGrounded=" + isGrounded + 
-                    " coyoteTimer=" + coyoteTimer + 
-                    " jumpBufferTimer=" + jumpBufferTimer);
-        }
-        if(jumpBufferTimer > 0 && coyoteTimer > 0){
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
-            jumpBufferTimer = 0;
-            coyoteTimer = 0;
-        }
-    }
-
-    void HandleGravity(){
-        if (isTouchingWall && !isGrounded) return; // wall slide handles this
-
-        float yVel = rb.linearVelocity.y;
-
-        if (yVel < 0)
-            rb.AddForce(Vector3.up * Physics.gravity.y * (fallMultiplier - 1f), ForceMode.Acceleration);
-        else if (yVel > 0)
-            rb.AddForce(Vector3.up * Physics.gravity.y * (lowJumpMultiplier - 1f), ForceMode.Acceleration);
-    }
-
-    private void HandleWallSlide(){
-        if(isTouchingWall && !isGrounded && rb.linearVelocity.y < 0){
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, -wallSpeed, 0f);
         }
     }
 
@@ -201,10 +113,15 @@ public class Player2D : MonoBehaviour
         if (wallCheck != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(
-                wallCheck.position,
-                wallCheck.position + transform.right * wallDistance
-            );
+            // Draw a line to the right
+            Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3.right * wallDistance));
+            // Draw a line to the left
+            Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3.left * wallDistance));
+            
+            // Draw small spheres at the end of the lines so you can see exactly where the check stops
+            Gizmos.DrawWireSphere(wallCheck.position + (Vector3.right * wallDistance), 0.05f);
+            Gizmos.DrawWireSphere(wallCheck.position + (Vector3.left * wallDistance), 0.05f);
         }
     }
+    
 }
