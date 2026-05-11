@@ -89,4 +89,10 @@ public class ScoringManager : MonoBehaviour{
     public void IncreaseSwaps(){
         numSwaps += 1;
     }
+
+    public void ResetScore(){
+        numSwaps = 0;
+        currScore = 0;
+        currentTime = 0f;
+    }
 }

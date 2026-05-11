@@ -7,9 +7,11 @@ public class VictoryScreen : MonoBehaviour{
 
     private void Start(){
         Cursor.visible = true;
+        ScoringManager.Instance.SubmitScore();
         if(finalScoreText != null){
             finalScoreText.text = "FINAL SCORE: " + ScoringManager.Instance.GetCurrentScore().ToString("000000");
         }
+        ScoringManager.Instance.ResetScore();
     }
 
     public void Restart(){
