@@ -216,9 +216,9 @@ public class Ghost2DChase : MonoBehaviour
 
     private void DecreaseScore(int amount)
     {
-        if (ScoringSystem.Instance != null)
+        if (ScoringManager.Instance != null)
         {
-            ScoringSystem.Instance.AddScore(-amount);
+            ScoringManager.Instance.AddScore(-amount);
         }
         else
         {

@@ -40,6 +40,7 @@ public class LevelManager : MonoBehaviour{
         playerTD.SetSpawn(subLevels[currLevel].spawnPointTD);
         PlayerManager.Instance.GroupRespawn();
         PlayerManager.Instance.Setup2D();
+        ScoringManager.Instance.StartLevelTracking();
     }
 
     public void CompleteCurrSublevel(){
@@ -52,6 +53,7 @@ public class LevelManager : MonoBehaviour{
         curr.isCompleted = true;
         curr.subLevelObjects.SetActive(false);
         currLevel += 1;
+        ScoringManager.Instance.StopLevelTracking();
         if(currLevel <= subLevels.Length - 1){
             SetSubLevel();
             Invoke(nameof(ResetTransition), 0.5f);

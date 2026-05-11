@@ -14,8 +14,14 @@ public class TitleScreen : MonoBehaviour{
 
     public void Start(){
         Cursor.visible = true;
-        ScoringUI.SetActive(true);
-        MainMenuUI.SetActive(false);
+        if(ScoringManager.Instance.GetPlayerName() != null){ // player found dont begin on scoring menu
+            ScoringUI.SetActive(false);
+            MainMenuUI.SetActive(true);
+        }
+        else{ // player name needed
+            ScoringUI.SetActive(true);
+            MainMenuUI.SetActive(false);
+        }
         InfoUI.SetActive(false);
         SettingsUI.SetActive(false);
     }

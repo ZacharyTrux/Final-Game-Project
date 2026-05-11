@@ -366,14 +366,14 @@ public class GhostNavMeshChase : MonoBehaviour
 
     private void DecreaseScore(int amount)
     {
-        if (ScoringSystem.Instance != null)
+        if (ScoringManager.Instance != null)
         {
-            ScoringSystem.Instance.AddScore(-amount);
+            ScoringManager.Instance.AddScore(-amount);
             Debug.Log("Score decreased by " + amount);
         }
         else
         {
-            Debug.LogWarning("ScoringSystem.Instance is missing. Cannot decrease score.");
+            Debug.LogWarning("ScoringManager.Instance is missing. Cannot decrease score.");
         }
     }
 

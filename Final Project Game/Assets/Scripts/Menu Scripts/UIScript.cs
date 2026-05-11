@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class UIScript : MonoBehaviour{
     private string titleScreen = "Title Screen";
@@ -11,6 +12,8 @@ public class UIScript : MonoBehaviour{
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI hintText;
     public static UIScript Instance {get; private set;}
+
+    private PlayerInput controls;
     
     private void Awake(){
         if(Instance != null && Instance != this){
@@ -21,18 +24,32 @@ public class UIScript : MonoBehaviour{
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Start(){
+        Time.timeScale = 1f;
+        pauseMenu.SetActive(false);
+        controls = new PlayerInput();
+        controls.Enable();
+    }
+
+    private void Update(){
+        if(controls.Player.Pause.WasPressedThisFrame()){
+            if(Time.timeScale == 0f){
+                ContinueGame();
+                PlayerManager.Instance.enabled = true;
+            }
+            else{
+                PauseGame();
+                PlayerManager.Instance.enabled = false;
+            }
+        }
+    }
+
     public void UpdateHealthUI(){
         healthText.text = "HEALTH: " + PlayerManager.Instance.currHealth;
     }
 
     public void UpdateScoreUI(){
-        //scoreText.text = "SCORE: " + ScoreManager.Instance.score;
-    }
-
-
-    private void Start(){
-        Time.timeScale = 1f;
-        pauseMenu.SetActive(false);
+        scoreText.text = "SCORE: " + ScoringManager.Instance.GetCurrentScore().ToString("000000");
     }
 
     public void PauseGame(){

@@ -860,6 +860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb22875a010a2604e81ae466966f7190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VictoryScreen
+  finalScoreText: {fileID: 1593074731}
 --- !u!1 &953093035
 GameObject:
   m_ObjectHideFlags: 0
