@@ -105,4 +105,14 @@ public class PlayerManager : MonoBehaviour{
         Respawn();
         checkHealth();
     }
+
+    public bool Is2DActive()
+    {
+        return is2DActive;
+    }
+
+    public bool IsTopDownActive()
+    {
+        return !is2DActive;
+    }
 }

@@ -3,423 +3,200 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Collider))]
-public class GhostNavMeshChase : MonoBehaviour
+public class GhostTopDownNavMeshChase : MonoBehaviour
 {
-    [Header("Visual")]
-    public Transform visualModel;
-    public float visualRotationOffsetZ = 180f;
-
     [Header("Target")]
-    public Transform targetPlayer;
+    public Transform topDownPlayer;
+    public string topDownPlayerTag = "TopDownPlayer";
+    public string player2DTag = "2DPlayer";
 
-    [Header("Chase Settings")]
-    public float chaseSpeed = 2f;
-    public float updateRate = 0.2f;
+    [Header("Chase")]
+    public float chaseSpeed = 3.5f;
+    public float stoppingDistance = 1.2f;
+    public float updatePathRate = 0.2f;
 
-    [Header("Plane Lock")]
-    public bool lockZ = true;
-
-    [Header("Hit Settings")]
+    [Header("Damage TopDown Player Only")]
     public int scorePenalty = 50;
     public float damageCooldown = 1.5f;
 
-    [Header("Stun / Fade Settings")]
-    public float stunDuration = 2f;
-    [Range(0.1f, 1f)]
-    public float stunnedAlpha = 0.35f;
+    [Header("2D Player Can Kill Ghost")]
+    public bool canBeKilledBy2DPlayer = true;
+    public float stompHeightOffset = 0.05f;
 
-    [Header("Fallback Patrol When Stuck")]
-    public float patrolDistance = 2f;
-    public float patrolPointSearchRadius = 2f;
-    public float stuckCheckTime = 1.0f;
-    public float stuckMoveThreshold = 0.05f;
-    public float fallbackPatrolDuration = 3f;
+    [Header("Keep Original Rotation")]
+    public bool keepStartingRotation = true;
 
     private NavMeshAgent agent;
+    private Collider ghostCollider;
+    private Quaternion startingRotation;
 
-    private Renderer[] visualRenderers;
-    private Color[] originalColors;
-
-    private float updateTimer;
+    private float pathTimer;
     private float damageTimer;
-    private float fixedZ;
+    private bool isDead = false;
+    private DamageFlash damageFlash;
 
-    private bool isStunned;
-    private float stunTimer;
-
-    private Vector3 lastPosition;
-    private float stuckTimer;
-
-    private bool fallbackPatrolMode;
-    private float fallbackTimer;
-    private Vector3 patrolCenter;
-    private Vector3 patrolLeftPoint;
-    private Vector3 patrolRightPoint;
-    private bool movingToRightPoint = true;
-
-    void Awake()
-    {
+    private void Awake()
+    {   
         agent = GetComponent<NavMeshAgent>();
+        ghostCollider = GetComponent<Collider>();
+        damageFlash = GetComponentInChildren<DamageFlash>();
+
+        startingRotation = transform.rotation;
 
         agent.speed = chaseSpeed;
-        agent.stoppingDistance = 0f;
+        agent.stoppingDistance = stoppingDistance;
 
-        // NavMesh calculates path, but this script controls visible transform.
-        agent.updatePosition = false;
+        // Keeps your ghost from rotating weirdly while chasing.
         agent.updateRotation = false;
-
-        if (visualModel != null)
-        {
-            visualRenderers = visualModel.GetComponentsInChildren<Renderer>();
-        }
-        else
-        {
-            visualRenderers = GetComponentsInChildren<Renderer>();
-        }
-
-        SaveOriginalColors();
+        agent.updateUpAxis = false;
     }
 
-    void Start()
+    private void Start()
     {
-        fixedZ = transform.position.z;
-
-        NavMeshHit hit;
-
-        if (NavMesh.SamplePosition(transform.position, out hit, 5f, NavMesh.AllAreas))
+        if (topDownPlayer == null)
         {
-            agent.Warp(hit.position);
+            GameObject playerObj = GameObject.FindGameObjectWithTag(topDownPlayerTag);
 
-            Vector3 startPos = hit.position;
-
-            if (lockZ)
+            if (playerObj != null)
             {
-                startPos.z = fixedZ;
+                topDownPlayer = playerObj.transform;
             }
-
-            transform.position = startPos;
-            agent.nextPosition = transform.position;
-
-            patrolCenter = transform.position;
-            BuildPatrolPoints();
-
-            Debug.Log("Top-down ghost snapped to NavMesh: " + hit.position);
+            else
+            {
+                Debug.LogWarning("Ghost cannot find TopDownPlayer. Check the player tag.");
+            }
         }
-        else
-        {
-            Debug.LogWarning("Top-down ghost could not find NavMesh near its position.");
-        }
-
-        lastPosition = transform.position;
     }
 
-    void Update()
+    private void Update()
     {
-        if (agent == null) return;
-        if (!agent.isOnNavMesh) return;
+        if (isDead) return;
 
         damageTimer -= Time.deltaTime;
 
-        if (isStunned)
+        if (keepStartingRotation)
         {
-            UpdateStun();
-            return;
+            transform.rotation = startingRotation;
         }
 
-        if (fallbackPatrolMode)
+        if (topDownPlayer == null) return;
+        if (!agent.isOnNavMesh) return;
+
+        pathTimer -= Time.deltaTime;
+
+        if (pathTimer <= 0f)
         {
-            UpdateFallbackPatrol();
+            agent.SetDestination(topDownPlayer.position);
+            pathTimer = updatePathRate;
         }
-        else
-        {
-            UpdateChasePlayer();
-            CheckIfStuck();
-        }
-
-        MoveGhostUsingAgent();
-    }
-
-    private void UpdateChasePlayer()
-    {
-        if (targetPlayer == null) return;
-
-        updateTimer -= Time.deltaTime;
-
-        if (updateTimer <= 0f)
-        {
-            agent.isStopped = false;
-            agent.SetDestination(targetPlayer.position);
-            updateTimer = updateRate;
-        }
-    }
-
-    private void CheckIfStuck()
-    {
-        if (targetPlayer == null) return;
-
-        float movedDistance = Vector3.Distance(transform.position, lastPosition);
-
-        bool tryingToMove =
-            agent.hasPath &&
-            agent.remainingDistance > agent.stoppingDistance + 0.2f;
-
-        if (tryingToMove && movedDistance < stuckMoveThreshold)
-        {
-            stuckTimer += Time.deltaTime;
-        }
-        else
-        {
-            stuckTimer = 0f;
-        }
-
-        if (stuckTimer >= stuckCheckTime)
-        {
-            StartFallbackPatrol();
-        }
-
-        lastPosition = transform.position;
-    }
-
-    private void StartFallbackPatrol()
-    {
-        fallbackPatrolMode = true;
-        fallbackTimer = fallbackPatrolDuration;
-        stuckTimer = 0f;
-
-        patrolCenter = transform.position;
-        BuildPatrolPoints();
-
-        movingToRightPoint = !movingToRightPoint;
-        SetPatrolDestination();
-
-        Debug.Log("Top-down ghost is stuck, switching to forward/back patrol.");
-    }
-
-    private void UpdateFallbackPatrol()
-    {
-        fallbackTimer -= Time.deltaTime;
-
-        if (fallbackTimer <= 0f)
-        {
-            fallbackPatrolMode = false;
-            updateTimer = 0f;
-
-            Debug.Log("Top-down ghost leaving fallback patrol and chasing again.");
-            return;
-        }
-
-        if (!agent.pathPending && agent.remainingDistance < 0.25f)
-        {
-            movingToRightPoint = !movingToRightPoint;
-            SetPatrolDestination();
-        }
-    }
-
-    private void BuildPatrolPoints()
-    {
-        Vector3 leftRaw = patrolCenter - transform.right * patrolDistance;
-        Vector3 rightRaw = patrolCenter + transform.right * patrolDistance;
-
-        patrolLeftPoint = GetNearestNavMeshPoint(leftRaw);
-        patrolRightPoint = GetNearestNavMeshPoint(rightRaw);
-    }
-
-    private Vector3 GetNearestNavMeshPoint(Vector3 rawPoint)
-    {
-        NavMeshHit hit;
-
-        if (NavMesh.SamplePosition(rawPoint, out hit, patrolPointSearchRadius, NavMesh.AllAreas))
-        {
-            Vector3 point = hit.position;
-
-            if (lockZ)
-            {
-                point.z = fixedZ;
-            }
-
-            return point;
-        }
-
-        Vector3 fallback = transform.position;
-
-        if (lockZ)
-        {
-            fallback.z = fixedZ;
-        }
-
-        return fallback;
-    }
-
-    private void SetPatrolDestination()
-    {
-        Vector3 destination = movingToRightPoint ? patrolRightPoint : patrolLeftPoint;
-        agent.isStopped = false;
-        agent.SetDestination(destination);
-    }
-
-    private void MoveGhostUsingAgent()
-    {
-        Vector3 oldPosition = transform.position;
-        Vector3 next = agent.nextPosition;
-
-        if (lockZ)
-        {
-            next.z = fixedZ;
-        }
-
-        transform.position = next;
-        agent.nextPosition = transform.position;
-
-        Vector3 moveDirection = transform.position - oldPosition;
-        RotateVisualTopDown(moveDirection);
-    }
-
-    private void RotateVisualTopDown(Vector3 moveDirection)
-    {
-        if (visualModel == null) return;
-        if (moveDirection.sqrMagnitude < 0.0001f) return;
-
-        Vector3 dir = new Vector3(moveDirection.x, moveDirection.y, 0f).normalized;
-
-        Quaternion lookRotation =
-            Quaternion.LookRotation(Vector3.forward, dir) *
-            Quaternion.Euler(0f, 0f, visualRotationOffsetZ);
-
-        visualModel.rotation = lookRotation;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        HandleTopDownPlayerTouch(other);
+        HandleTouch(other);
     }
 
     private void OnTriggerStay(Collider other)
     {
-        HandleTopDownPlayerTouch(other);
+        HandleTouch(other);
     }
 
-    private void HandleTopDownPlayerTouch(Collider other)
+    private void HandleTouch(Collider other)
     {
-        if (!other.CompareTag("TopDownPlayer")) return;
+        if (isDead) return;
+
+        // TopDown player touches ghost: lose score.
+        if (other.CompareTag(topDownPlayerTag))
+        {
+            DamageTopDownPlayer();
+            return;
+        }
+
+        // 2D player touches ghost: ONLY check if 2D player jumped on it.
+        // If it is side touch, do nothing.
+        if (other.CompareTag(player2DTag))
+        {
+            if (canBeKilledBy2DPlayer && Is2DPlayerStompingGhost(other))
+            {
+                KillGhost();
+            }
+
+            return;
+        }
+    }
+
+    private bool Is2DPlayerStompingGhost(Collider playerCollider)
+    {
+        if (ghostCollider == null) return false;
+
+        Bounds playerBounds = playerCollider.bounds;
+        Bounds ghostBounds = ghostCollider.bounds;
+
+        bool playerIsAboveGhost = playerBounds.center.y > ghostBounds.center.y;
+
+        bool playerFeetAreHighEnough =
+            playerBounds.min.y >= ghostBounds.center.y + stompHeightOffset;
+
+        bool playerMovingDown = true;
+
+        Rigidbody playerRb = playerCollider.GetComponent<Rigidbody>();
+
+        if (playerRb != null)
+        {
+            playerMovingDown = playerRb.linearVelocity.y <= 0.2f;
+        }
+
+        return playerIsAboveGhost && playerFeetAreHighEnough && playerMovingDown;
+    }
+
+    private void DamageTopDownPlayer()
+    {
         if (damageTimer > 0f) return;
-        if (isStunned) return;
 
-        Debug.Log("Top-down ghost hit top-down player. Score -50, ghost stunned/faded.");
+        if (ScoringManager.Instance != null)
+        {
+            ScoringManager.Instance.AddScore(-scorePenalty);
+            Debug.Log("TopDown player hit by ghost. Score -" + scorePenalty);
+        }
+        else
+        {
+            Debug.LogWarning("ScoringManager.Instance not found.");
+        }
 
-        DamagePlayer();
-        DecreaseScore(scorePenalty);
-        StartStun();
-
+        if (damageFlash != null)
+        {
+            Debug.Log("Calling ghost damage flash.");
+            damageFlash.CallDamageFlash();
+        }
+        else
+        {
+            Debug.LogWarning("DamageFlash script not found on ghost.");
+        }
+        
         damageTimer = damageCooldown;
+
+        
     }
 
-    private void StartStun()
+    private void KillGhost()
     {
-        isStunned = true;
-        stunTimer = stunDuration;
+        if (isDead) return;
 
-        fallbackPatrolMode = false;
-        stuckTimer = 0f;
+        isDead = true;
 
-        agent.isStopped = true;
-        agent.ResetPath();
+        Debug.Log("2D Player jumped on top-down ghost. Ghost killed.");
 
-        SetGhostAlpha(stunnedAlpha);
-    }
-
-    private void UpdateStun()
-    {
-        stunTimer -= Time.deltaTime;
-
-        // Keep ghost standing still.
-        agent.nextPosition = transform.position;
-
-        if (stunTimer <= 0f)
+        if (agent != null)
         {
-            EndStun();
+            agent.isStopped = true;
+            agent.enabled = false;
         }
-    }
 
-    private void EndStun()
-    {
-        isStunned = false;
-
-        SetGhostAlpha(1f);
-
-        agent.isStopped = false;
-        updateTimer = 0f;
-
-        Debug.Log("Top-down ghost recovered. Searching player again.");
-    }
-
-    private void DamagePlayer()
-    {
-        if (PlayerManager.Instance != null)
+        if (ghostCollider != null)
         {
-            PlayerManager.Instance.TakeDamage();
+            ghostCollider.enabled = false;
         }
-        else
-        {
-            Debug.LogWarning("PlayerManager.Instance is missing. Cannot damage player.");
-        }
-    }
 
-    private void DecreaseScore(int amount)
-    {
-        if (ScoringSystem.Instance != null)
-        {
-            ScoringSystem.Instance.AddScore(-amount);
-            Debug.Log("Score decreased by " + amount);
-        }
-        else
-        {
-            Debug.LogWarning("ScoringSystem.Instance is missing. Cannot decrease score.");
-        }
-    }
-
-    private void SaveOriginalColors()
-    {
-        if (visualRenderers == null) return;
-
-        originalColors = new Color[visualRenderers.Length];
-
-        for (int i = 0; i < visualRenderers.Length; i++)
-        {
-            Material mat = visualRenderers[i].material;
-
-            if (mat.HasProperty("_BaseColor"))
-            {
-                originalColors[i] = mat.GetColor("_BaseColor");
-            }
-            else if (mat.HasProperty("_Color"))
-            {
-                originalColors[i] = mat.color;
-            }
-            else
-            {
-                originalColors[i] = Color.white;
-            }
-        }
-    }
-
-    private void SetGhostAlpha(float alpha)
-    {
-        if (visualRenderers == null || originalColors == null) return;
-
-        for (int i = 0; i < visualRenderers.Length; i++)
-        {
-            Material mat = visualRenderers[i].material;
-            Color c = originalColors[i];
-            c.a = alpha;
-
-            if (mat.HasProperty("_BaseColor"))
-            {
-                mat.SetColor("_BaseColor", c);
-            }
-            else if (mat.HasProperty("_Color"))
-            {
-                mat.color = c;
-            }
-        }
+        Destroy(gameObject);
     }
 }

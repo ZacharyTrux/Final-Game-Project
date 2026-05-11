@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Collider))]
 public class Ghost2DChase : MonoBehaviour
@@ -216,13 +217,21 @@ public class Ghost2DChase : MonoBehaviour
 
     private void DecreaseScore(int amount)
     {
-        if (ScoringSystem.Instance != null)
+        GameObject scoringObject = GameObject.Find("ScoringSystem");
+
+        if (scoringObject != null)
         {
-            ScoringSystem.Instance.AddScore(-amount);
+            scoringObject.SendMessage(
+                "AddScore",
+                -amount,
+                SendMessageOptions.DontRequireReceiver
+            );
+
+            Debug.Log("Score decreased by " + amount);
         }
         else
         {
-            Debug.LogWarning("ScoringSystem.Instance is missing. Cannot decrease score.");
+            Debug.LogWarning("Could not find GameObject named ScoringSystem.");
         }
     }
 }

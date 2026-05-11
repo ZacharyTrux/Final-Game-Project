@@ -1,21 +1,55 @@
 using UnityEngine;
 
+public enum CollectableType
+{
+    For2DPlayer,
+    ForTopDownPlayer
+}
+
 public class CollectableItems : MonoBehaviour
 {
     [Header("Score")]
     public int scoreAmount = 100;
 
-    [Header("Who can collect this")]
-    public LayerMask playerLayers;
+    [Header("Who can collect this fruit")]
+    public CollectableType collectableType;
+
+    [Header("Player Tags")]
+    public string player2DTag = "2DPlayer";
+    public string topDownPlayerTag = "TopDownPlayer";
 
     private bool collected = false;
+    private Collider itemCollider;
+
+    private void Awake()
+    {
+        itemCollider = GetComponent<Collider>();
+    }
+
+    private void Update()
+    {
+        UpdateColliderByCurrentPlayer();
+    }
+
+    private void UpdateColliderByCurrentPlayer()
+    {
+        if (PlayerManager.Instance == null || itemCollider == null) return;
+
+        if (collectableType == CollectableType.For2DPlayer)
+        {
+            itemCollider.enabled = PlayerManager.Instance.Is2DActive();
+        }
+        else if (collectableType == CollectableType.ForTopDownPlayer)
+        {
+            itemCollider.enabled = PlayerManager.Instance.IsTopDownActive();
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (collected) return;
 
-        bool isPlayerLayer = (playerLayers.value & (1 << other.gameObject.layer)) != 0;
-        if (!isPlayerLayer) return;
+        if (!CanThisPlayerCollect(other)) return;
 
         collected = true;
 
@@ -25,9 +59,24 @@ public class CollectableItems : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("No ScoringSystem found in the scene.");
+            Debug.LogWarning("No ScoringManager found in the scene.");
         }
 
         Destroy(gameObject);
+    }
+
+    private bool CanThisPlayerCollect(Collider other)
+    {
+        if (collectableType == CollectableType.For2DPlayer)
+        {
+            return other.CompareTag(player2DTag);
+        }
+
+        if (collectableType == CollectableType.ForTopDownPlayer)
+        {
+            return other.CompareTag(topDownPlayerTag);
+        }
+
+        return false;
     }
 }
