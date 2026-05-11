@@ -35,7 +35,13 @@ public class Player2D : MonoBehaviour{
     private string currAnimation;
     private bool wasGrounded;
 
+    [Header("Audio")]
+    private AudioSource audioSrc;
+    public float stepInterval = .35f;
+    private float stepTimer;
+
     void Awake(){
+        audioSrc = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         controls = new PlayerInput();
@@ -80,9 +86,9 @@ public class Player2D : MonoBehaviour{
         }
 
         if(isGrounded && !wasGrounded){
+            //SoundManager.Play(SoundType.LANDING);
             animator.SetTrigger("Landing");
             currAnimation = "Landing";
-            print("landed");
             return;
         }
 
@@ -91,9 +97,14 @@ public class Player2D : MonoBehaviour{
         if(isGrounded){
             if(moveInput != 0){
                 newState = "Walking";
+                HandleStepSound();
+            }
+            else{
+                stepTimer = 0f;
             }
         }
         else{
+            stepTimer = 0f;
             if(rb.linearVelocity.y > 0.1f){
                 newState = "Jump";
             }
@@ -153,6 +164,7 @@ public class Player2D : MonoBehaviour{
     }
 
     IEnumerator DrowningCoroutine(){
+        SoundManager.Play(SoundType.DROWNING);
         animator.SetTrigger("Drowning");
         yield return new WaitForSeconds(0.5f);
         PlayerManager.Instance.TakeDamage();
@@ -179,6 +191,14 @@ public class Player2D : MonoBehaviour{
             // Draw small spheres at the end of the lines so you can see exactly where the check stops
             Gizmos.DrawWireSphere(wallCheck.position + (Vector3.right * wallDistance), 0.05f);
             Gizmos.DrawWireSphere(wallCheck.position + (Vector3.left * wallDistance), 0.05f);
+        }
+    }
+
+    public void HandleStepSound(){
+        stepTimer -= Time.deltaTime;
+        if(stepTimer <= 0f){
+            SoundManager.Play(SoundType.WALKING, audioSrc);
+            stepTimer = stepInterval;
         }
     }
     

@@ -19,15 +19,13 @@ public class CollectableItems : MonoBehaviour
 
         collected = true;
 
-        if (ScoringManager.Instance != null)
-        {
+        if (ScoringManager.Instance != null){
             ScoringManager.Instance.AddScore(scoreAmount);
         }
-        else
-        {
+        else{
             Debug.LogWarning("No ScoringSystem found in the scene.");
         }
-
+        SoundManager.Play(SoundType.PICKUP);
         Destroy(gameObject);
     }
 }

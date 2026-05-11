@@ -59,16 +59,20 @@ public class UIScript : MonoBehaviour{
     }
 
     public void ContinueGame(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         Cursor.visible = false;
         Time.timeScale = 1f;
         pauseMenu.SetActive(false);
     }
 
     public void ForceRespawn(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
+        ContinueGame();
         PlayerManager.Instance.Respawn();
     }
 
     public void ReturnToMenu(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         Time.timeScale = 1f;
         SceneManager.LoadScene(titleScreen);
         Destroy(gameObject);

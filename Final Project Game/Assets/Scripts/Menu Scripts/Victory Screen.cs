@@ -13,10 +13,12 @@ public class VictoryScreen : MonoBehaviour{
     }
 
     public void Restart(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         SceneManager.LoadScene("Forest Level");
     }
 
     public void MainMenu(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         SceneManager.LoadScene("Title Screen");
     }
 }
