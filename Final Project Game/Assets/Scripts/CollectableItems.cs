@@ -53,15 +53,13 @@ public class CollectableItems : MonoBehaviour
 
         collected = true;
 
-        if (ScoringManager.Instance != null)
-        {
+        if (ScoringManager.Instance != null){
             ScoringManager.Instance.AddScore(scoreAmount);
         }
-        else
-        {
-            Debug.LogWarning("No ScoringManager found in the scene.");
+        else{
+            Debug.LogWarning("No ScoringSystem found in the scene.");
         }
-
+        SoundManager.Play(SoundType.PICKUP);
         Destroy(gameObject);
     }
 

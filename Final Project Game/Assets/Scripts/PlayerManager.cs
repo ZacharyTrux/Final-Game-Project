@@ -41,12 +41,27 @@ public class PlayerManager : MonoBehaviour{
     }
 
     void Update(){
-        if(controls.Player.Pause.WasPressedThisFrame()){
-            print("game paused");
-            UIScript.Instance.PauseGame();
-        }
         if(controls.Player.Transition.WasPressedThisFrame() && !isTransitioning){
             StartCoroutine(ChangePerspective());
+            ScoringManager.Instance.IncreaseSwaps();
+        }
+    }
+
+    public void OnDisable(){
+        controls.Disable();
+        player2D.enabled = false;
+        playerTopDown.enabled = false;
+    }
+
+    public void OnEnable(){
+        controls.Enable();
+        if(is2DActive){
+            player2D.enabled = true;
+            playerTopDown.enabled = false;
+        }
+        else{
+            player2D.enabled = false;
+            playerTopDown.enabled = true;
         }
     }
 

@@ -217,17 +217,9 @@ public class Ghost2DChase : MonoBehaviour
 
     private void DecreaseScore(int amount)
     {
-        GameObject scoringObject = GameObject.Find("ScoringSystem");
-
-        if (scoringObject != null)
+        if (ScoringManager.Instance != null)
         {
-            scoringObject.SendMessage(
-                "AddScore",
-                -amount,
-                SendMessageOptions.DontRequireReceiver
-            );
-
-            Debug.Log("Score decreased by " + amount);
+            ScoringManager.Instance.AddScore(-amount);
         }
         else
         {

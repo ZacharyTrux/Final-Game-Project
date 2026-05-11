@@ -172,7 +172,7 @@ public class GhostTopDownNavMeshChase : MonoBehaviour
         {
             Debug.LogWarning("DamageFlash script not found on ghost.");
         }
-        
+
         damageTimer = damageCooldown;
 
         

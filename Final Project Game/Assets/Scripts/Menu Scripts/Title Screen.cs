@@ -14,23 +14,32 @@ public class TitleScreen : MonoBehaviour{
 
     public void Start(){
         Cursor.visible = true;
-        ScoringUI.SetActive(true);
-        MainMenuUI.SetActive(false);
+        if(ScoringManager.Instance.GetPlayerName() != null){ // player found dont begin on scoring menu
+            ScoringUI.SetActive(false);
+            MainMenuUI.SetActive(true);
+        }
+        else{ // player name needed
+            ScoringUI.SetActive(true);
+            MainMenuUI.SetActive(false);
+        }
         InfoUI.SetActive(false);
         SettingsUI.SetActive(false);
     }
 
     public void StartGame(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         SceneManager.LoadScene("Forest Level");
         Cursor.visible = false;
     }
 
     public void ChangeSettingsMenu(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         MainMenuUI.SetActive(false);
         SettingsUI.SetActive(true);
     }
 
     public void QuitGame(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         Application.Quit();
     }
 
@@ -41,6 +50,7 @@ public class TitleScreen : MonoBehaviour{
             errorText.text = "";
             ScoringUI.SetActive(false);
             MainMenuUI.SetActive(true);
+            SoundManager.Play(SoundType.BUTTON_CLICK);
         }
         else{
             errorText.text = "Please enter a valid name.";
@@ -48,21 +58,25 @@ public class TitleScreen : MonoBehaviour{
     }
 
     public void ChangeGameInfo(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         SettingsUI.SetActive(false);
         InfoUI.SetActive(true);
     }
 
     public void ChangeScoringMenu(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         ScoringUI.SetActive(true);
         SettingsUI.SetActive(false);
     }
 
     public void ReturnSettings(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         InfoUI.SetActive(false);
         SettingsUI.SetActive(true);
     }
 
     public void ReturnMainMenu(){
+        SoundManager.Play(SoundType.BUTTON_CLICK);
         SettingsUI.SetActive(false);
         MainMenuUI.SetActive(true);
     }
