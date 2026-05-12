@@ -121,13 +121,11 @@ public class PlayerManager : MonoBehaviour{
         checkHealth();
     }
 
-    public bool Is2DActive()
-    {
+    public bool Is2DActive(){
         return is2DActive;
     }
 
-    public bool IsTopDownActive()
-    {
+    public bool IsTopDownActive(){
         return !is2DActive;
     }
 }

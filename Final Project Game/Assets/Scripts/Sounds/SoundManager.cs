@@ -76,14 +76,16 @@ public class SoundManager : MonoBehaviour {
     };
   }
 
-  public static void Play(SoundType type, AudioSource audioSrc = null, float pitch = -1) {
+  public static void Play(SoundType type, AudioSource audioSrc = null, bool changePitch = true, float pitch = -1) {
     if(Instance.sounds.ContainsKey(type)) {
-      audioSrc ??= Instance.audioSrc;
-      audioSrc.volume = Random.Range(0.7f, 1.0f) * Instance.mainVolume;
-      audioSrc.pitch = pitch >= 0 ? pitch : Random.Range(0.75f, 1.25f);
-      audioSrc.clip = Instance.sounds[type].GetRandClip();
-      audioSrc.Play();
-
+        audioSrc ??= Instance.audioSrc;
+        audioSrc.volume = Random.Range(0.7f, 1.0f) * Instance.mainVolume;
+      
+        if(changePitch){
+            audioSrc.pitch = pitch >= 0 ? pitch : Random.Range(0.75f, 1.25f);
+        }
+        audioSrc.clip = Instance.sounds[type].GetRandClip();
+        audioSrc.Play();
     }
   }
 

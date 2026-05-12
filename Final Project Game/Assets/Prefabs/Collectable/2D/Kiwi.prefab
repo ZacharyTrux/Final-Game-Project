@@ -112,8 +112,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.9375, y: 1, z: 0.5806367}
-  m_Center: {x: 0, y: 0, z: -0.19031826}
+  m_Size: {x: 0.9375, y: 1, z: 1.1822294}
+  m_Center: {x: 0, y: 0, z: -0.49111453}
 --- !u!114 &1158016721711253915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,6 +127,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectableItems
   scoreAmount: 100
-  playerLayers:
-    serializedVersion: 2
-    m_Bits: 128
+  collectableType: 0
+  player2DTag: 2DPlayer
+  topDownPlayerTag: TopDownPlayer
