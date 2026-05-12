@@ -3484,7 +3484,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: 51ef9672fa5c8447495e4520f563dd03, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1001 &162037984
 PrefabInstance:
@@ -7024,7 +7024,7 @@ PrefabInstance:
     - target: {fileID: 2633837774503283294, guid: 7ac721a6059004e0d88922aeb630d028, type: 3}
       propertyPath: topDownPlayer
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2075047562}
     - target: {fileID: 2633837774503283294, guid: 7ac721a6059004e0d88922aeb630d028, type: 3}
       propertyPath: stoppingDistance
       value: 0
@@ -9253,7 +9253,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: e057d1bd13c3941b694027d72734bdc6, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1001 &466383055
 PrefabInstance:
@@ -9268,9 +9268,13 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
+      propertyPath: canBeStomped
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: targetPlayer
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 525414599134734860}
     - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: stopDistanceX
       value: 0
@@ -9283,6 +9287,10 @@ PrefabInstance:
       propertyPath: patrolRightPoint
       value: 
       objectReference: {fileID: 2021231872}
+    - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
+      propertyPath: deathParticlePrefab
+      value: 
+      objectReference: {fileID: 383671393772149425, guid: 6f0985d7ffb914ea28019b23e956ed6d, type: 3}
     - target: {fileID: 2159496070133498509, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: m_Height
       value: 6.001894
@@ -14989,9 +14997,13 @@ PrefabInstance:
       value: 3.45
       objectReference: {fileID: 0}
     - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
+      propertyPath: canBeStomped
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: targetPlayer
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 525414599134734860}
     - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: stopDistanceX
       value: 0
@@ -28196,9 +28208,13 @@ PrefabInstance:
       value: 5.38
       objectReference: {fileID: 0}
     - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
+      propertyPath: canBeStomped
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: targetPlayer
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 525414599134734860}
     - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: stopDistanceX
       value: 0
@@ -28211,6 +28227,10 @@ PrefabInstance:
       propertyPath: patrolRightPoint
       value: 
       objectReference: {fileID: 648556843}
+    - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
+      propertyPath: deathParticlePrefab
+      value: 
+      objectReference: {fileID: 383671393772149425, guid: 6f0985d7ffb914ea28019b23e956ed6d, type: 3}
     - target: {fileID: 2159496070133498509, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: m_Height
       value: 6.001894
@@ -38711,7 +38731,7 @@ PrefabInstance:
     - target: {fileID: 2633837774503283294, guid: 7ac721a6059004e0d88922aeb630d028, type: 3}
       propertyPath: topDownPlayer
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2075047562}
     - target: {fileID: 2633837774503283294, guid: 7ac721a6059004e0d88922aeb630d028, type: 3}
       propertyPath: stoppingDistance
       value: 0
@@ -40679,7 +40699,7 @@ PrefabInstance:
     - target: {fileID: 2633837774503283294, guid: 7ac721a6059004e0d88922aeb630d028, type: 3}
       propertyPath: topDownPlayer
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2075047562}
     - target: {fileID: 2633837774503283294, guid: 7ac721a6059004e0d88922aeb630d028, type: 3}
       propertyPath: stoppingDistance
       value: 0
@@ -42970,9 +42990,13 @@ PrefabInstance:
       value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
+      propertyPath: canBeStomped
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: targetPlayer
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 525414599134734860}
     - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: stopDistanceX
       value: 0
@@ -42985,6 +43009,10 @@ PrefabInstance:
       propertyPath: patrolRightPoint
       value: 
       objectReference: {fileID: 1572630823}
+    - target: {fileID: 1997962563267973578, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
+      propertyPath: deathParticlePrefab
+      value: 
+      objectReference: {fileID: 383671393772149425, guid: 6f0985d7ffb914ea28019b23e956ed6d, type: 3}
     - target: {fileID: 2159496070133498509, guid: f040713e4d6e44093a5365f63043b98e, type: 3}
       propertyPath: m_Height
       value: 6.001894
