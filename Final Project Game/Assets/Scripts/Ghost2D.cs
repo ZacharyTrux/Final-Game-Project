@@ -4,6 +4,9 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class Ghost2DChase : MonoBehaviour
 {
+    [Header("Death Effect")]
+    public ParticleSystem deathParticlePrefab; 
+
     [Header("Target")]
     public Transform targetPlayer;
 
@@ -29,6 +32,8 @@ public class Ghost2DChase : MonoBehaviour
 
     [Header("Stun After Side Hit")]
     public float stunDuration = 2f;
+
+    
 
     private Rigidbody rb;
     private Collider ghostCollider;
@@ -231,7 +236,7 @@ public class Ghost2DChase : MonoBehaviour
         Debug.Log("2D Player hit ghost from side. Damage + Ghost stunned.");
 
         PlayerManager.Instance?.TakeDamage();
-        DecreaseScore(scorePenalty);
+        ScoringManager.Instance?.AddScore(-scorePenalty);
         StunGhost();
 
         damageTimer = damageCooldown;
@@ -248,17 +253,36 @@ public class Ghost2DChase : MonoBehaviour
     {
         Debug.Log("2D Player stomped ghost. Ghost killed.");
 
+        // Play death particle at ghost position
+        if (deathParticlePrefab != null)
+        {
+            ParticleSystem effect = Instantiate(
+                deathParticlePrefab,
+                transform.position,   // spawn at ghost position
+                Quaternion.identity   // no rotation needed
+            );
+
+            // Make sure it plays and self-destructs when done
+            var main = effect.main;
+            main.loop = false;
+            main.stopAction = ParticleSystemStopAction.Destroy;
+
+            effect.Play();
+        }
+        else
+        {
+            Debug.LogWarning("No death particle prefab assigned on ghost.");
+        }
+
+        // Disable collider so no more triggers fire
         if (ghostCollider != null) ghostCollider.enabled = false;
-        if (rb != null) { rb.linearVelocity = Vector3.zero; rb.isKinematic = true; }
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
 
         Destroy(gameObject);
-    }
-
-    private void DecreaseScore(int amount)
-    {
-        if (ScoringManager.Instance != null)
-            ScoringManager.Instance.AddScore(-amount);
-        else
-            Debug.LogWarning("ScoringManager not found.");
     }
 }
