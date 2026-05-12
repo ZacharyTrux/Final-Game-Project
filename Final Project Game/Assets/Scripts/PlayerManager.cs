@@ -21,7 +21,7 @@ public class PlayerManager : MonoBehaviour{
     private bool is2DActive = true;
     private bool isTransitioning = false;
     public int currHealth;
-    private int maxHealth = 3;
+    private int maxHealth = 5;
     private string loseScreen = "Lose Screen";
 
     void Awake(){
@@ -93,18 +93,16 @@ public class PlayerManager : MonoBehaviour{
         isTransitioning = true;
         if(is2DActive){
             SetupTopDown();
-            is2DActive = false;
         }
         else{
             Setup2D();
-            is2DActive = true;
         }
         yield return null;
         isTransitioning = false;
     }
 
-    public void Setup2D()
-    {
+    public void Setup2D(){
+        is2DActive = true;
         if (oCam != null) oCam.Priority = 11;
         if (pCam != null) pCam.Priority = 9;
 
@@ -112,8 +110,8 @@ public class PlayerManager : MonoBehaviour{
         if (playerTopDown != null) playerTopDown.enabled = false;
     }
 
-    public void SetupTopDown()
-    {
+    public void SetupTopDown(){
+        is2DActive = false;
         if (pCam != null) pCam.Priority = 11;
         if (oCam != null) oCam.Priority = 9;
 

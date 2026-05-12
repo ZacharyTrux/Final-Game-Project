@@ -113,7 +113,6 @@ public class CompletionZone : MonoBehaviour{
         playerTDTransform.localScale = startScaleTD;
         player2DTransform.rotation = start2DRot;
         playerTDTransform.rotation = startTDRot;
-        PlayerManager.Instance.enabled = true; 
         LevelManager.Instance.CompleteCurrSublevel();
     }
 }

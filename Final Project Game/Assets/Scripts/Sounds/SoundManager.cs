@@ -78,7 +78,7 @@ public class SoundManager : MonoBehaviour {
     };
   }
 
-  public static void Play(SoundType type, AudioSource audioSrc = null, bool changePitch = true, float pitch = -1) {
+  public static void Play(SoundType type, bool changePitch = true, AudioSource audioSrc = null, float pitch = -1) {
     if(Instance.sounds.ContainsKey(type)) {
         audioSrc ??= Instance.audioSrc;
         audioSrc.volume = Random.Range(0.7f, 1.0f) * Instance.mainVolume;
