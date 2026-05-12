@@ -15,25 +15,11 @@ public class StairPuzzleManager : MonoBehaviour
     public GameObject[] disableAtStage8;
     public GameObject[] disableAtStage9;
 
-    [Header("Bridge")]
-    public GameObject bridgePiece;
-    public Transform bridgeTarget;
-    public float bridgeMoveSpeed = 3f;
-
-    private bool moveBridge = false;
-    private bool bridgeStarted = false;
-
-    private void Update()
-    {
-        if (moveBridge && bridgePiece != null && bridgeTarget != null)
-        {
-            bridgePiece.transform.position = Vector3.MoveTowards(
-                bridgePiece.transform.position,
-                bridgeTarget.position,
-                bridgeMoveSpeed * Time.deltaTime
-            );
-        }
-    }
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip correctStepSound;
+    public AudioClip wrongMoveSound;
+    public AudioClip puzzleCompleteSound;
 
     public void TryAdvanceStage(int requiredStage, int nextStage)
     {
@@ -46,21 +32,36 @@ public class StairPuzzleManager : MonoBehaviour
             currentStage = nextStage;
             Debug.Log("Puzzle advanced to stage: " + currentStage);
 
+            PlaySound(correctStepSound);
             UpdateBombs();
-
-            if (currentStage == 10)
-            {
-                StartBridge();
-            }
         }
         else
         {
             Debug.Log("Wrong move. Current stage is: " + currentStage);
 
+            PlaySound(wrongMoveSound);
+
             if (ScoringManager.Instance != null)
             {
                 ScoringManager.Instance.WrongMovePenalty();
             }
+        }
+    }
+
+    public bool IsPuzzleReadyForPortal()
+    {
+        return currentStage >= 9;
+    }
+
+    public void CompletePuzzle()
+    {
+        Debug.Log("Stair puzzle completed through portal.");
+
+        PlaySound(puzzleCompleteSound);
+
+        if (ScoringManager.Instance != null)
+        {
+            ScoringManager.Instance.PuzzleCompleteBonus();
         }
     }
 
@@ -92,28 +93,14 @@ public class StairPuzzleManager : MonoBehaviour
                 Debug.Log("Turning " + obj.name + " active = " + active);
                 obj.SetActive(active);
             }
-            else
-            {
-                Debug.LogWarning("Empty bomb slot at stage " + currentStage);
-            }
         }
     }
 
-    private void StartBridge()
+    private void PlaySound(AudioClip clip)
     {
-        if (bridgeStarted)
+        if (audioSource != null && clip != null)
         {
-            return;
-        }
-
-        bridgeStarted = true;
-
-        Debug.Log("Bridge is joining!");
-        moveBridge = true;
-
-        if (ScoringManager.Instance != null)
-        {
-            ScoringManager.Instance.PuzzleCompleteBonus();
+            audioSource.PlayOneShot(clip);
         }
     }
 }
