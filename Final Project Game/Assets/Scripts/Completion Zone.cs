@@ -86,6 +86,7 @@ public class CompletionZone : MonoBehaviour{
 
         Vector3 startScale2D = player2DTransform.localScale;
         Vector3 startScaleTD = playerTDTransform.localScale;
+        SoundManager.Play(SoundType.PORTAL);
 
         while(timeElapsed < duration){
             timeElapsed += Time.deltaTime;
@@ -105,6 +106,7 @@ public class CompletionZone : MonoBehaviour{
 
             yield return null;
         }
+        SoundManager.Stop(SoundType.PORTAL);
 
         // reset player transforms and complete level
         player2DTransform.localScale = startScale2D;
