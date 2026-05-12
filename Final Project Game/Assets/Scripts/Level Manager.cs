@@ -91,7 +91,7 @@ public class LevelManager : MonoBehaviour
 
         if (curr.subLevelObjects != null)
         {
-            curr.subLevelObjects.SetActive(false);
+            //curr.subLevelObjects.SetActive(false);
         }
 
         currLevel += 1;
