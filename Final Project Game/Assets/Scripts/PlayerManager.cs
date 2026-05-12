@@ -47,19 +47,43 @@ public class PlayerManager : MonoBehaviour{
         }
     }
 
-    public void OnDisable(){
-        controls.Disable();
-        player2D.enabled = false;
-        playerTopDown.enabled = false;
+    public void OnDisable()
+    {
+        if (controls != null)
+        {
+            controls.Disable();
+        }
+
+        if (player2D != null)
+        {
+            player2D.enabled = false;
+        }
+
+        if (playerTopDown != null)
+        {
+            playerTopDown.enabled = false;
+        }
     }
 
-    public void OnEnable(){
-        controls.Enable();
-        if(is2DActive){
+    public void OnEnable()
+    {
+        if (controls != null)
+        {
+            controls.Enable();
+        }
+
+        if (player2D == null || playerTopDown == null)
+        {
+            return;
+        }
+
+        if (is2DActive)
+        {
             player2D.enabled = true;
             playerTopDown.enabled = false;
         }
-        else{
+        else
+        {
             player2D.enabled = false;
             playerTopDown.enabled = true;
         }
@@ -79,19 +103,23 @@ public class PlayerManager : MonoBehaviour{
         isTransitioning = false;
     }
 
-    public void Setup2D(){
-        oCam.Priority = 11;
-        pCam.Priority = 9;
-        player2D.enabled = true;
-        playerTopDown.enabled = false;
+    public void Setup2D()
+    {
+        if (oCam != null) oCam.Priority = 11;
+        if (pCam != null) pCam.Priority = 9;
+
+        if (player2D != null) player2D.enabled = true;
+        if (playerTopDown != null) playerTopDown.enabled = false;
     }
 
-    public void SetupTopDown(){
-        pCam.Priority = 11;
-        oCam.Priority = 9;
-        player2D.enabled = false;
-        playerTopDown.enabled = true;
-    }    
+    public void SetupTopDown()
+    {
+        if (pCam != null) pCam.Priority = 11;
+        if (oCam != null) oCam.Priority = 9;
+
+        if (player2D != null) player2D.enabled = false;
+        if (playerTopDown != null) playerTopDown.enabled = true;
+    }
 
     public void checkHealth(){
         if(currHealth <= 0){
@@ -110,10 +138,22 @@ public class PlayerManager : MonoBehaviour{
         }
     }
 
-    public void GroupRespawn(){
-        player2D.transform.position = player2D.spawnPoint.position;
-        oCam.PreviousStateIsValid = false; // jump to new player position
-        playerTopDown.transform.position = playerTopDown.spawnPoint.position;
+    public void GroupRespawn()
+    {
+        if (player2D != null && player2D.spawnPoint != null)
+        {
+            player2D.transform.position = player2D.spawnPoint.position;
+        }
+
+        if (oCam != null)
+        {
+            oCam.PreviousStateIsValid = false;
+        }
+
+        if (playerTopDown != null && playerTopDown.spawnPoint != null)
+        {
+            playerTopDown.transform.position = playerTopDown.spawnPoint.position;
+        }
     }
 
     public void TakeDamage(){
