@@ -10,6 +10,7 @@ public enum SoundType {
   DROWNING,
   LANDING,
   BUTTON_CLICK,
+  JUMP,
 }
 
 public class SoundCollection {
@@ -67,27 +68,37 @@ public class SoundManager : MonoBehaviour {
     sounds = new() {
       {SoundType.PICKUP, new SoundCollection("pickup") },
       {SoundType.WALKING, new SoundCollection("walk") },
-      {SoundType.PORTAL, new SoundCollection("portal") },
+      {SoundType.JUMP, new SoundCollection("jumpSound") },
+      {SoundType.PORTAL, new SoundCollection("teleportSound") },
       {SoundType.LEVER, new SoundCollection("lever_sound") },
       {SoundType.CHANGE_PERSPECTIVE, new SoundCollection("swap_sound") },
-      {SoundType.LANDING, new SoundCollection("landing_grass") },
+      {SoundType.LANDING, new SoundCollection("fallSound") },
       {SoundType.DROWNING, new SoundCollection("falling_water") },
       {SoundType.BUTTON_CLICK, new SoundCollection("button_click") },
     };
   }
 
-  public static void Play(SoundType type, AudioSource audioSrc = null, float pitch = -1) {
+  public static void Play(SoundType type, AudioSource audioSrc = null, bool changePitch = true, float pitch = -1) {
     if(Instance.sounds.ContainsKey(type)) {
-      audioSrc ??= Instance.audioSrc;
-      audioSrc.volume = Random.Range(0.7f, 1.0f) * Instance.mainVolume;
-      audioSrc.pitch = pitch >= 0 ? pitch : Random.Range(0.75f, 1.25f);
-      audioSrc.clip = Instance.sounds[type].GetRandClip();
-      audioSrc.Play();
-
+        audioSrc ??= Instance.audioSrc;
+        audioSrc.volume = Random.Range(0.7f, 1.0f) * Instance.mainVolume;
+      
+        if(changePitch){
+            audioSrc.pitch = pitch >= 0 ? pitch : Random.Range(0.75f, 1.25f);
+        }
+        audioSrc.clip = Instance.sounds[type].GetRandClip();
+        audioSrc.Play();
     }
   }
 
   public static void StopAllMusic(){
     Instance.audioSrc.Stop();
+  }
+
+  public static void Stop(SoundType type, AudioSource audioSrc = null){
+    AudioSource sourceStop = audioSrc ?? Instance.audioSrc;
+    if(sourceStop.isPlaying){
+      sourceStop.Stop();
+    }
   }
 }

@@ -112,6 +112,7 @@ public class PlayerManager : MonoBehaviour{
 
     public void GroupRespawn(){
         player2D.transform.position = player2D.spawnPoint.position;
+        oCam.PreviousStateIsValid = false; // jump to new player position
         playerTopDown.transform.position = playerTopDown.spawnPoint.position;
     }
 
@@ -121,13 +122,11 @@ public class PlayerManager : MonoBehaviour{
         checkHealth();
     }
 
-    public bool Is2DActive()
-    {
+    public bool Is2DActive(){
         return is2DActive;
     }
 
-    public bool IsTopDownActive()
-    {
+    public bool IsTopDownActive(){
         return !is2DActive;
     }
 }

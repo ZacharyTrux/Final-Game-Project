@@ -86,7 +86,7 @@ public class Player2D : MonoBehaviour{
         }
 
         if(isGrounded && !wasGrounded){
-            //SoundManager.Play(SoundType.LANDING);
+            SoundManager.Play(SoundType.LANDING);
             animator.SetTrigger("Landing");
             currAnimation = "Landing";
             return;
@@ -112,6 +112,9 @@ public class Player2D : MonoBehaviour{
 
         if(newState != currAnimation){
             animator.SetTrigger(newState);
+            if(newState == "Jump"){
+                SoundManager.Play(SoundType.JUMP);
+            }
             currAnimation = newState;
         }
     }
@@ -152,7 +155,6 @@ public class Player2D : MonoBehaviour{
 
     public void TakeDamage(){
         PlayerManager.Instance.TakeDamage();
-        print("took damage");
     }
 
     public void SetSpawn(Transform position){
@@ -163,7 +165,7 @@ public class Player2D : MonoBehaviour{
         StartCoroutine(DrowningCoroutine());
     }
 
-    IEnumerator DrowningCoroutine(){
+    private IEnumerator DrowningCoroutine(){ // handle giving time for drowning animation
         SoundManager.Play(SoundType.DROWNING);
         animator.SetTrigger("Drowning");
         yield return new WaitForSeconds(0.5f);
@@ -201,5 +203,4 @@ public class Player2D : MonoBehaviour{
             stepTimer = stepInterval;
         }
     }
-    
 }
