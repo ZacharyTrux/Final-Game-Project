@@ -35,11 +35,9 @@ public class UIScript : MonoBehaviour{
         if(controls.Player.Pause.WasPressedThisFrame()){
             if(Time.timeScale == 0f){
                 ContinueGame();
-                PlayerManager.Instance.enabled = true;
             }
             else{
                 PauseGame();
-                PlayerManager.Instance.enabled = false;
             }
         }
     }
@@ -53,12 +51,14 @@ public class UIScript : MonoBehaviour{
     }
 
     public void PauseGame(){
+        PlayerManager.Instance.enabled = false;
         Cursor.visible = true;
         Time.timeScale = 0f;
         pauseMenu.SetActive(true); 
     }
 
     public void ContinueGame(){
+        PlayerManager.Instance.enabled = true;
         SoundManager.Play(SoundType.BUTTON_CLICK);
         Cursor.visible = false;
         Time.timeScale = 1f;
