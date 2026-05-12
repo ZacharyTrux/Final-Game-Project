@@ -11,6 +11,8 @@ public enum SoundType {
   LANDING,
   BUTTON_CLICK,
   JUMP,
+  BACKGROUND
+      
 }
 
 public class SoundCollection {
@@ -75,6 +77,7 @@ public class SoundManager : MonoBehaviour {
       {SoundType.LANDING, new SoundCollection("fallSound") },
       {SoundType.DROWNING, new SoundCollection("falling_water") },
       {SoundType.BUTTON_CLICK, new SoundCollection("button_click") },
+      {SoundType.BACKGROUND, new SoundCollection("forest_background") },
     };
   }
 
