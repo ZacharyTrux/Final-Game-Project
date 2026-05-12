@@ -60,7 +60,7 @@ public class CollectableItems : MonoBehaviour
             Debug.LogWarning("No ScoringSystem found in the scene.");
         }
         Destroy(gameObject);
-        SoundManager.Play(SoundType.PICKUP, other.GetComponent<AudioSource>(), false);
+        SoundManager.Play(SoundType.PICKUP, false);
         
     }
 
