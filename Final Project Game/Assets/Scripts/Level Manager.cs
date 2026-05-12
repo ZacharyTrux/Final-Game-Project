@@ -21,8 +21,7 @@ public class LevelManager : MonoBehaviour
 
     public static LevelManager Instance { get; private set; }
 
-    void Awake()
-    {
+    void Awake(){
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -32,8 +31,7 @@ public class LevelManager : MonoBehaviour
         Instance = this;
     }
 
-    void Start()
-    {
+    void Start(){
         player2D = GameObject.FindWithTag("2DPlayer").GetComponent<Player2D>();
         playerTD = GameObject.FindWithTag("TopDownPlayer").GetComponent<PlayerTopDown>();
 
