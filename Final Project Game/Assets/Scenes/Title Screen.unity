@@ -579,7 +579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7176471, g: 0.8117647, b: 0.67058825, a: 1}
+  m_Color: {r: 0.105882354, g: 0.30980393, b: 0.003921569, a: 0.7882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1688,10 +1688,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Siblings Curse
+  m_text: Siblings Curse !
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5c7c4e7389d564b34a7ce648c9b57480, type: 2}
-  m_sharedMaterial: {fileID: 2219537991685012525, guid: 5c7c4e7389d564b34a7ce648c9b57480, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1e7062835325b4494b9e888ed018c651, type: 2}
+  m_sharedMaterial: {fileID: -8625577883933192957, guid: 1e7062835325b4494b9e888ed018c651, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8926,8 +8926,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Quit Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5c7c4e7389d564b34a7ce648c9b57480, type: 2}
-  m_sharedMaterial: {fileID: 2219537991685012525, guid: 5c7c4e7389d564b34a7ce648c9b57480, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 65bf45e22a49b41adb56e32f90e7a12f, type: 2}
+  m_sharedMaterial: {fileID: 1144909168844331685, guid: 65bf45e22a49b41adb56e32f90e7a12f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -11166,7 +11166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7176471, g: 0.8117647, b: 0.67058825, a: 1}
+  m_Color: {r: 0.10691829, g: 0.3207547, b: 0, a: 0.7882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11671,8 +11671,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Settings
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5c7c4e7389d564b34a7ce648c9b57480, type: 2}
-  m_sharedMaterial: {fileID: 2219537991685012525, guid: 5c7c4e7389d564b34a7ce648c9b57480, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 65bf45e22a49b41adb56e32f90e7a12f, type: 2}
+  m_sharedMaterial: {fileID: 1144909168844331685, guid: 65bf45e22a49b41adb56e32f90e7a12f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -11870,8 +11870,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Start Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5c7c4e7389d564b34a7ce648c9b57480, type: 2}
-  m_sharedMaterial: {fileID: 2219537991685012525, guid: 5c7c4e7389d564b34a7ce648c9b57480, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 65bf45e22a49b41adb56e32f90e7a12f, type: 2}
+  m_sharedMaterial: {fileID: 1144909168844331685, guid: 65bf45e22a49b41adb56e32f90e7a12f, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -18518,7 +18518,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7176471, g: 0.8117647, b: 0.67058825, a: 1}
+  m_Color: {r: 0.101960786, g: 0.31764707, b: 0, a: 0.7882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
