@@ -21,6 +21,6 @@ public class VictoryScreen : MonoBehaviour{
 
     public void MainMenu(){
         SoundManager.Play(SoundType.BUTTON_CLICK);
-        SceneManager.LoadScene("Title Screen");
+        SceneManager.LoadScene(0);
     }
 }
