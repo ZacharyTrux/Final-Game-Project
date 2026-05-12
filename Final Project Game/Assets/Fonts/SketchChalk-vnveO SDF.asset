@@ -2608,7 +2608,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: SketchChalk-vnveO SDF Material
   m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
-  m_Parent: {fileID: 2100000, guid: e010fddcbbc4bbd499efaa2972c49bb1, type: 2}
+  m_Parent: {fileID: 2100000, guid: befe4b6f7c43d8a4db3821e294d37be7, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
