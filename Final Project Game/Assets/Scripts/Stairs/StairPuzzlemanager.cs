@@ -21,6 +21,7 @@ public class StairPuzzleManager : MonoBehaviour
     public float bridgeMoveSpeed = 3f;
 
     private bool moveBridge = false;
+    private bool bridgeStarted = false;
 
     private void Update()
     {
@@ -55,6 +56,11 @@ public class StairPuzzleManager : MonoBehaviour
         else
         {
             Debug.Log("Wrong move. Current stage is: " + currentStage);
+
+            if (ScoringManager.Instance != null)
+            {
+                ScoringManager.Instance.WrongMovePenalty();
+            }
         }
     }
 
@@ -95,7 +101,19 @@ public class StairPuzzleManager : MonoBehaviour
 
     private void StartBridge()
     {
+        if (bridgeStarted)
+        {
+            return;
+        }
+
+        bridgeStarted = true;
+
         Debug.Log("Bridge is joining!");
         moveBridge = true;
+
+        if (ScoringManager.Instance != null)
+        {
+            ScoringManager.Instance.PuzzleCompleteBonus();
+        }
     }
 }

@@ -29,6 +29,11 @@ public class SpikeKill : MonoBehaviour
             }
 
             Debug.Log(other.name + " respawned.");
+
+            if (ScoringManager.Instance != null)
+            {
+                ScoringManager.Instance.BombPenalty();
+            }
         }
     }
 }
