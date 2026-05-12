@@ -152,7 +152,6 @@ public class Player2D : MonoBehaviour{
 
     public void TakeDamage(){
         PlayerManager.Instance.TakeDamage();
-        print("took damage");
     }
 
     public void SetSpawn(Transform position){
@@ -163,7 +162,7 @@ public class Player2D : MonoBehaviour{
         StartCoroutine(DrowningCoroutine());
     }
 
-    IEnumerator DrowningCoroutine(){
+    private IEnumerator DrowningCoroutine(){ // handle giving time for drowning animation
         SoundManager.Play(SoundType.DROWNING);
         animator.SetTrigger("Drowning");
         yield return new WaitForSeconds(0.5f);
@@ -201,5 +200,4 @@ public class Player2D : MonoBehaviour{
             stepTimer = stepInterval;
         }
     }
-    
 }

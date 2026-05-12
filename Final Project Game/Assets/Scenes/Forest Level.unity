@@ -2074,6 +2074,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2023100798}
     m_Modifications:
+    - target: {fileID: 1978723170175798651, guid: a967695a1f909b54ea67d88d541db7b0, type: 3}
+      propertyPath: Player2DTarget
+      value: 
+      objectReference: {fileID: 1281898932}
+    - target: {fileID: 1978723170175798651, guid: a967695a1f909b54ea67d88d541db7b0, type: 3}
+      propertyPath: PlayerTDTarget
+      value: 
+      objectReference: {fileID: 1078921350}
+    - target: {fileID: 1978723170175798651, guid: a967695a1f909b54ea67d88d541db7b0, type: 3}
+      propertyPath: player2DTarget
+      value: 
+      objectReference: {fileID: 1281898932}
+    - target: {fileID: 1978723170175798651, guid: a967695a1f909b54ea67d88d541db7b0, type: 3}
+      propertyPath: playerTDTarget
+      value: 
+      objectReference: {fileID: 1078921350}
     - target: {fileID: 2299604168002623121, guid: a967695a1f909b54ea67d88d541db7b0, type: 3}
       propertyPath: m_Name
       value: Portal
@@ -4756,6 +4772,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3710670912749704320, guid: 502220423cd104d36b644cfefe6c9a85, type: 3}
   m_PrefabInstance: {fileID: 1350851609}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1078921350 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3558807652178140311, guid: a967695a1f909b54ea67d88d541db7b0, type: 3}
+  m_PrefabInstance: {fileID: 403827663}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1086443827 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3710670912749704320, guid: 502220423cd104d36b644cfefe6c9a85, type: 3}
@@ -5959,13 +5980,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectableItems
   scoreAmount: 100
-  playerLayers:
-    serializedVersion: 2
-    m_Bits: 128
+  collectableType: 0
+  player2DTag: 2DPlayer
+  topDownPlayerTag: TopDownPlayer
 --- !u!4 &1272532763 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1171247414494114524, guid: 784f0a09c0b92459581e42f46029d678, type: 3}
   m_PrefabInstance: {fileID: 1652575691}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1281898932 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8238379572278973985, guid: a967695a1f909b54ea67d88d541db7b0, type: 3}
+  m_PrefabInstance: {fileID: 403827663}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1318156944
 PrefabInstance:

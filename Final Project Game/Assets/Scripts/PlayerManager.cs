@@ -112,6 +112,7 @@ public class PlayerManager : MonoBehaviour{
 
     public void GroupRespawn(){
         player2D.transform.position = player2D.spawnPoint.position;
+        oCam.PreviousStateIsValid = false; // jump to new player position
         playerTopDown.transform.position = playerTopDown.spawnPoint.position;
     }
 

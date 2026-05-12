@@ -67,7 +67,7 @@ public class SoundManager : MonoBehaviour {
     sounds = new() {
       {SoundType.PICKUP, new SoundCollection("pickup") },
       {SoundType.WALKING, new SoundCollection("walk") },
-      {SoundType.PORTAL, new SoundCollection("portal") },
+      {SoundType.PORTAL, new SoundCollection("teleportSound") },
       {SoundType.LEVER, new SoundCollection("lever_sound") },
       {SoundType.CHANGE_PERSPECTIVE, new SoundCollection("swap_sound") },
       {SoundType.LANDING, new SoundCollection("landing_grass") },
@@ -91,5 +91,12 @@ public class SoundManager : MonoBehaviour {
 
   public static void StopAllMusic(){
     Instance.audioSrc.Stop();
+  }
+
+  public static void Stop(SoundType type, AudioSource audioSrc = null){
+    AudioSource sourceStop = audioSrc ?? Instance.audioSrc;
+    if(sourceStop.isPlaying){
+      sourceStop.Stop();
+    }
   }
 }
