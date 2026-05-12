@@ -4,6 +4,10 @@ public class SpikeKill : MonoBehaviour
 {
     public Transform respawnPoint;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip bombSound;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("TopDownPlayer") || other.CompareTag("2DPlayer"))
@@ -20,7 +24,6 @@ public class SpikeKill : MonoBehaviour
             {
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
-
                 rb.position = respawnPoint.position;
             }
             else
@@ -28,12 +31,22 @@ public class SpikeKill : MonoBehaviour
                 other.transform.position = respawnPoint.position;
             }
 
+            PlayBombSound();
+
             Debug.Log(other.name + " respawned.");
 
             if (ScoringManager.Instance != null)
             {
                 ScoringManager.Instance.BombPenalty();
             }
+        }
+    }
+
+    private void PlayBombSound()
+    {
+        if (audioSource != null && bombSound != null)
+        {
+            audioSource.PlayOneShot(bombSound);
         }
     }
 }
