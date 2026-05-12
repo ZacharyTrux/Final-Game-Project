@@ -138,20 +138,9 @@ public class PlayerManager : MonoBehaviour{
 
     public void GroupRespawn()
     {
-        if (player2D != null && player2D.spawnPoint != null)
-        {
-            player2D.transform.position = player2D.spawnPoint.position;
-        }
-
-        if (oCam != null)
-        {
-            oCam.PreviousStateIsValid = false;
-        }
-
-        if (playerTopDown != null && playerTopDown.spawnPoint != null)
-        {
-            playerTopDown.transform.position = playerTopDown.spawnPoint.position;
-        }
+        player2D.transform.position = player2D.spawnPoint.position;
+        oCam.PreviousStateIsValid = false;
+        playerTopDown.transform.position = playerTopDown.spawnPoint.position;
     }
 
     public void TakeDamage(){

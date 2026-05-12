@@ -78,6 +78,7 @@ public class LevelManager : MonoBehaviour
         PlayerManager.Instance.Setup2D();
         ScoringManager.Instance.StartLevelTracking();
         PlayerManager.Instance.enabled = true;
+        PlayerManager.Instance.GroupRespawn();
     }
 
     public void CompleteCurrSublevel()
