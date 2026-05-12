@@ -86,7 +86,7 @@ public class Player2D : MonoBehaviour{
         }
 
         if(isGrounded && !wasGrounded){
-            //SoundManager.Play(SoundType.LANDING);
+            SoundManager.Play(SoundType.LANDING);
             animator.SetTrigger("Landing");
             currAnimation = "Landing";
             return;
@@ -112,6 +112,9 @@ public class Player2D : MonoBehaviour{
 
         if(newState != currAnimation){
             animator.SetTrigger(newState);
+            if(newState == "Jump"){
+                SoundManager.Play(SoundType.JUMP);
+            }
             currAnimation = newState;
         }
     }
