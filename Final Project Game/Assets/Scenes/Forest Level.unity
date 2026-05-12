@@ -812,6 +812,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &52949088
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6283,6 +6285,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 1868945326}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &402327904
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7360,6 +7364,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &473168976
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8610,9 +8616,10 @@ MonoBehaviour:
   - {fileID: 402327901}
   disableAtStage9:
   - {fileID: 150302330}
-  bridgePiece: {fileID: 0}
-  bridgeTarget: {fileID: 0}
-  bridgeMoveSpeed: 3
+  audioSource: {fileID: 0}
+  correctStepSound: {fileID: 0}
+  wrongMoveSound: {fileID: 0}
+  puzzleCompleteSound: {fileID: 0}
 --- !u!1001 &558579866
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12363,6 +12370,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 1868945326}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &760344523
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13875,6 +13884,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &862836937
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20026,6 +20037,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 1868945326}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &982778218
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20215,6 +20228,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 1868945326}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1005883366
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20844,6 +20859,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 1868945326}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1067705520
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20971,6 +20988,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1072494651
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -21593,6 +21612,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1103779151
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24416,6 +24437,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1286493120
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24742,6 +24765,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 1868945326}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1315189843
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -31058,6 +31083,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1428003373
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -31475,6 +31502,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1441675653
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -34161,6 +34190,16 @@ MonoBehaviour:
     spawnPoint2D: {fileID: 720126835}
     spawnPointTD: {fileID: 650637905}
     isCompleted: 0
+  - name: 1.4
+    subLevelObjects: {fileID: 1791746826}
+    spawnPoint2D: {fileID: 720126835}
+    spawnPointTD: {fileID: 650637905}
+    isCompleted: 0
+  - name: 1.5
+    subLevelObjects: {fileID: 876387293}
+    spawnPoint2D: {fileID: 720126835}
+    spawnPointTD: {fileID: 650637905}
+    isCompleted: 0
 --- !u!1001 &1652575691
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34409,6 +34448,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CompletionZone
   player2DTarget: {fileID: 0}
   playerTDTarget: {fileID: 0}
+  stairPuzzleManager: {fileID: 0}
   duration: 2
 --- !u!65 &1655475985
 BoxCollider:
@@ -35311,6 +35351,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 1868945326}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1698278444
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -35992,6 +36034,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &1729652922
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -40746,6 +40790,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpikeKill
   respawnPoint: {fileID: 981568898}
+  audioSource: {fileID: 0}
+  bombSound: {fileID: 0}
 --- !u!65 &2127903837
 BoxCollider:
   m_ObjectHideFlags: 0
