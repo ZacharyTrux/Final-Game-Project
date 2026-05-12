@@ -36,7 +36,7 @@ public class GhostTopDownNavMeshChase : MonoBehaviour
     private DamageFlash damageFlash;
 
     private void Awake()
-    {   
+    {
         agent = GetComponent<NavMeshAgent>();
         ghostCollider = GetComponent<Collider>();
         damageFlash = GetComponentInChildren<DamageFlash>();
@@ -46,7 +46,6 @@ public class GhostTopDownNavMeshChase : MonoBehaviour
         agent.speed = chaseSpeed;
         agent.stoppingDistance = stoppingDistance;
 
-        // Keeps your ghost from rotating weirdly while chasing.
         agent.updateRotation = false;
         agent.updateUpAxis = false;
     }
@@ -79,6 +78,16 @@ public class GhostTopDownNavMeshChase : MonoBehaviour
             transform.rotation = startingRotation;
         }
 
+        // Only chase when TopDown player is active
+        if (PlayerManager.Instance == null || !PlayerManager.Instance.IsTopDownActive())
+        {
+            agent.isStopped = true; // Ghost freezes when 2D is active
+            return;
+        }
+
+        // Resume movement when TopDown is active
+        agent.isStopped = false;
+
         if (topDownPlayer == null) return;
         if (!agent.isOnNavMesh) return;
 
@@ -105,22 +114,21 @@ public class GhostTopDownNavMeshChase : MonoBehaviour
     {
         if (isDead) return;
 
-        // TopDown player touches ghost: lose score.
+        // Block all ghost interactions when 2D player is active
+        if (PlayerManager.Instance == null || !PlayerManager.Instance.IsTopDownActive()) return;
+
         if (other.CompareTag(topDownPlayerTag))
         {
             DamageTopDownPlayer();
             return;
         }
 
-        // 2D player touches ghost: ONLY check if 2D player jumped on it.
-        // If it is side touch, do nothing.
         if (other.CompareTag(player2DTag))
         {
             if (canBeKilledBy2DPlayer && Is2DPlayerStompingGhost(other))
             {
                 KillGhost();
             }
-
             return;
         }
     }
@@ -133,14 +141,11 @@ public class GhostTopDownNavMeshChase : MonoBehaviour
         Bounds ghostBounds = ghostCollider.bounds;
 
         bool playerIsAboveGhost = playerBounds.center.y > ghostBounds.center.y;
-
         bool playerFeetAreHighEnough =
             playerBounds.min.y >= ghostBounds.center.y + stompHeightOffset;
 
         bool playerMovingDown = true;
-
         Rigidbody playerRb = playerCollider.GetComponent<Rigidbody>();
-
         if (playerRb != null)
         {
             playerMovingDown = playerRb.linearVelocity.y <= 0.2f;
@@ -165,17 +170,10 @@ public class GhostTopDownNavMeshChase : MonoBehaviour
 
         if (damageFlash != null)
         {
-            Debug.Log("Calling ghost damage flash.");
             damageFlash.CallDamageFlash();
-        }
-        else
-        {
-            Debug.LogWarning("DamageFlash script not found on ghost.");
         }
 
         damageTimer = damageCooldown;
-
-        
     }
 
     private void KillGhost()

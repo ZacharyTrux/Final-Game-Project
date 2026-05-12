@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Collider))]
 public class Ghost2DChase : MonoBehaviour
@@ -8,9 +7,17 @@ public class Ghost2DChase : MonoBehaviour
     [Header("Target")]
     public Transform targetPlayer;
 
-    [Header("Movement - Left / Right Only")]
+    [Header("Movement")]
     public float chaseSpeed = 3f;
+    public float patrolSpeed = 1.8f;
     public float stopDistanceX = 0.25f;
+
+    [Header("Patrol Waypoints")]
+    public Transform patrolLeftPoint;   // ← Assign in Inspector
+    public Transform patrolRightPoint;  // ← Assign in Inspector
+
+    [Header("Aggro Range")]
+    public float aggroRangeX = 5f;      // Player must be within this X distance to trigger chase
 
     [Header("Damage Settings")]
     public int scorePenalty = 50;
@@ -18,7 +25,6 @@ public class Ghost2DChase : MonoBehaviour
 
     [Header("Stomp Kill Settings")]
     public bool canBeStomped = true;
-    public float stompHeightThreshold = 0.15f;
     public bool destroyOnStomp = true;
 
     [Header("Stun After Side Hit")]
@@ -34,6 +40,11 @@ public class Ghost2DChase : MonoBehaviour
     private float fixedY;
     private float fixedZ;
 
+    private enum GhostState { Patrol, Chase }
+    private GhostState currentState = GhostState.Patrol;
+
+    private Transform currentPatrolTarget;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -42,7 +53,6 @@ public class Ghost2DChase : MonoBehaviour
         rb.useGravity = false;
         rb.freezeRotation = true;
 
-        // Lock physics movement so it cannot fly upward/downward or move in Z.
         rb.constraints =
             RigidbodyConstraints.FreezePositionY |
             RigidbodyConstraints.FreezePositionZ |
@@ -55,13 +65,16 @@ public class Ghost2DChase : MonoBehaviour
     {
         fixedY = transform.position.y;
         fixedZ = transform.position.z;
+
+        // Start patrolling toward the right point first
+        currentPatrolTarget = patrolRightPoint != null ? patrolRightPoint : patrolLeftPoint;
     }
 
     void FixedUpdate()
     {
         damageTimer -= Time.fixedDeltaTime;
 
-        KeepGhostOnLine();
+        EnforceGhostLine();
 
         if (isStunned)
         {
@@ -71,30 +84,86 @@ public class Ghost2DChase : MonoBehaviour
 
         if (targetPlayer == null) return;
 
-        ChasePlayerLeftRightOnly();
+        DecideState();
+
+        if (currentState == GhostState.Chase)
+            ChasePlayer();
+        else
+            Patrol();
     }
 
-    private void ChasePlayerLeftRightOnly()
+    // ── State Decision ─────────────────────────────────────────────────────
+
+    private void DecideState()
+    {
+        float distX = Mathf.Abs(targetPlayer.position.x - rb.position.x);
+
+        if (distX <= aggroRangeX)
+        {
+            if (currentState != GhostState.Chase)
+                Debug.Log("Ghost spotted player — switching to Chase.");
+
+            currentState = GhostState.Chase;
+        }
+        else
+        {
+            if (currentState != GhostState.Patrol)
+                Debug.Log("Player out of range — switching to Patrol.");
+
+            currentState = GhostState.Patrol;
+        }
+    }
+
+    // ── Chase ──────────────────────────────────────────────────────────────
+
+    private void ChasePlayer()
     {
         float distanceX = targetPlayer.position.x - rb.position.x;
 
         if (Mathf.Abs(distanceX) <= stopDistanceX)
+            return;
+
+        MoveOnX(Mathf.Sign(distanceX), chaseSpeed);
+    }
+
+    // ── Patrol ─────────────────────────────────────────────────────────────
+
+    private void Patrol()
+    {
+        if (currentPatrolTarget == null) return;
+
+        float distanceX = currentPatrolTarget.position.x - rb.position.x;
+
+        // Reached current waypoint — flip to the other one
+        if (Mathf.Abs(distanceX) <= 0.15f)
         {
-            rb.linearVelocity = Vector3.zero;
+            FlipPatrolTarget();
             return;
         }
 
-        float directionX = Mathf.Sign(distanceX);
-
-        Vector3 nextPosition = rb.position;
-        nextPosition.x += directionX * chaseSpeed * Time.fixedDeltaTime;
-        nextPosition.y = fixedY;
-        nextPosition.z = fixedZ;
-
-        rb.MovePosition(nextPosition);
+        MoveOnX(Mathf.Sign(distanceX), patrolSpeed);
     }
 
-    private void KeepGhostOnLine()
+    private void FlipPatrolTarget()
+    {
+        if (currentPatrolTarget == patrolRightPoint)
+            currentPatrolTarget = patrolLeftPoint;
+        else
+            currentPatrolTarget = patrolRightPoint;
+    }
+
+    // ── Movement ───────────────────────────────────────────────────────────
+
+    private void MoveOnX(float direction, float speed)
+    {
+        Vector3 next = rb.position;
+        next.x += direction * speed * Time.fixedDeltaTime;
+        next.y = fixedY;
+        next.z = fixedZ;
+        rb.MovePosition(next);
+    }
+
+    private void EnforceGhostLine()
     {
         Vector3 pos = rb.position;
         pos.y = fixedY;
@@ -105,42 +174,35 @@ public class Ghost2DChase : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
     }
 
+    // ── Stun ───────────────────────────────────────────────────────────────
+
     private void UpdateStun()
     {
         stunTimer -= Time.fixedDeltaTime;
-
         rb.linearVelocity = Vector3.zero;
 
         if (stunTimer <= 0f)
         {
             isStunned = false;
-            Debug.Log("2D Ghost finished stun. Chasing again.");
+            Debug.Log("Ghost stun finished. Resuming.");
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        HandlePlayerTouch(other);
-    }
+    // ── Collision ──────────────────────────────────────────────────────────
 
-    private void OnTriggerStay(Collider other)
-    {
-        HandlePlayerTouch(other);
-    }
+    private void OnTriggerEnter(Collider other)   { HandlePlayerTouch(other); }
+    private void OnTriggerStay(Collider other)    { HandlePlayerTouch(other); }
 
     private void HandlePlayerTouch(Collider other)
     {
         if (!other.CompareTag("2DPlayer")) return;
 
-        // Check stomp FIRST.
-        // If player is above ghost, kill ghost immediately.
         if (canBeStomped && IsPlayerStompingGhost(other))
         {
             KillGhost();
             return;
         }
 
-        // If not stomp, then it is side/body hit.
         DamagePlayerAndStunGhost();
     }
 
@@ -148,41 +210,27 @@ public class Ghost2DChase : MonoBehaviour
     {
         if (ghostCollider == null) return false;
 
-        Bounds playerBounds = playerCollider.bounds;
-        Bounds ghostBounds = ghostCollider.bounds;
+        Bounds pb = playerCollider.bounds;
+        Bounds gb = ghostCollider.bounds;
 
-        // Player must be above the ghost center.
-        bool playerIsAboveGhost = playerBounds.center.y > ghostBounds.center.y;
-
-        // Player feet should be near the top half/top area of ghost.
-        bool playerFeetNearGhostTop =
-            playerBounds.min.y >= ghostBounds.center.y;
-
-        // Optional downward check.
-        // If player has Rigidbody and is falling, this helps detect stomp.
-        bool playerMovingDown = true;
+        bool above = pb.center.y > gb.center.y;
+        bool feetHigh = pb.min.y >= gb.center.y;
+        bool movingDown = true;
 
         Rigidbody playerRb = playerCollider.GetComponent<Rigidbody>();
-
         if (playerRb != null)
-        {
-            playerMovingDown = playerRb.linearVelocity.y <= 0.2f;
-        }
+            movingDown = playerRb.linearVelocity.y <= 0.2f;
 
-        return playerIsAboveGhost && playerFeetNearGhostTop && playerMovingDown;
+        return above && feetHigh && movingDown;
     }
 
     private void DamagePlayerAndStunGhost()
     {
         if (damageTimer > 0f) return;
 
-        Debug.Log("2D Player hit ghost from side. Score -50. Ghost stunned.");
+        Debug.Log("2D Player hit ghost from side. Damage + Ghost stunned.");
 
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.TakeDamage();
-        }
-
+        PlayerManager.Instance?.TakeDamage();
         DecreaseScore(scorePenalty);
         StunGhost();
 
@@ -198,19 +246,10 @@ public class Ghost2DChase : MonoBehaviour
 
     private void KillGhost()
     {
-        Debug.Log("2D Player jumped on ghost. Ghost killed.");
+        Debug.Log("2D Player stomped ghost. Ghost killed.");
 
-        // Stop ghost from triggering score loss again before it disappears.
-        if (ghostCollider != null)
-        {
-            ghostCollider.enabled = false;
-        }
-
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector3.zero;
-            rb.isKinematic = true;
-        }
+        if (ghostCollider != null) ghostCollider.enabled = false;
+        if (rb != null) { rb.linearVelocity = Vector3.zero; rb.isKinematic = true; }
 
         Destroy(gameObject);
     }
@@ -218,12 +257,8 @@ public class Ghost2DChase : MonoBehaviour
     private void DecreaseScore(int amount)
     {
         if (ScoringManager.Instance != null)
-        {
             ScoringManager.Instance.AddScore(-amount);
-        }
         else
-        {
-            Debug.LogWarning("Could not find GameObject named ScoringSystem.");
-        }
+            Debug.LogWarning("ScoringManager not found.");
     }
 }

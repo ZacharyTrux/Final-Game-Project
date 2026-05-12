@@ -59,8 +59,9 @@ public class CollectableItems : MonoBehaviour
         else{
             Debug.LogWarning("No ScoringSystem found in the scene.");
         }
-        SoundManager.Play(SoundType.PICKUP, other.GetComponent<AudioSource>(), false);
         Destroy(gameObject);
+        SoundManager.Play(SoundType.PICKUP, other.GetComponent<AudioSource>(), false);
+        
     }
 
     private bool CanThisPlayerCollect(Collider other)
