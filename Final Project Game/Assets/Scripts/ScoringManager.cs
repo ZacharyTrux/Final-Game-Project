@@ -57,6 +57,37 @@ public class ScoringManager : MonoBehaviour{
         int combinedBonus = timeBonus + swapBonus;
         AddScore(combinedBonus);
     }
+    public void AddPenalty(int amount)
+    {
+        currScore -= amount;
+
+        if (currScore < 0)
+        {
+            currScore = 0;
+        }
+
+        if (UIScript.Instance != null)
+        {
+            UIScript.Instance.UpdateScoreUI();
+        }
+
+        Debug.Log("Penalty: -" + amount + " | Score: " + currScore);
+    }
+
+    public void BombPenalty()
+    {
+        AddPenalty(100);
+    }
+
+    public void WrongMovePenalty()
+    {
+        AddPenalty(50);
+    }
+
+    public void PuzzleCompleteBonus()
+    {
+        AddScore(300);
+    }
 
     public void SubmitScore(){
         HS.SubmitHighScore(this, playerName, currScore);
