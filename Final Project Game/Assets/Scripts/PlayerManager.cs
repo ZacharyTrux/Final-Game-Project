@@ -103,6 +103,7 @@ public class PlayerManager : MonoBehaviour{
 
     public void Setup2D(){
         is2DActive = true;
+        playerTopDown.Drop();
         if (oCam != null) oCam.Priority = 11;
         if (pCam != null) pCam.Priority = 9;
 
@@ -112,6 +113,7 @@ public class PlayerManager : MonoBehaviour{
 
     public void SetupTopDown(){
         is2DActive = false;
+        
         if (pCam != null) pCam.Priority = 11;
         if (oCam != null) oCam.Priority = 9;
 
@@ -136,10 +138,8 @@ public class PlayerManager : MonoBehaviour{
         }
     }
 
-    public void GroupRespawn()
-    {
+    public void GroupRespawn(){
         player2D.transform.position = player2D.spawnPoint.position;
-        oCam.PreviousStateIsValid = false;
         playerTopDown.transform.position = playerTopDown.spawnPoint.position;
     }
 

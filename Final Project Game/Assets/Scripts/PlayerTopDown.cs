@@ -109,6 +109,7 @@ public class PlayerTopDown : MonoBehaviour{
     }
 
     public void Drop(){
+        if(heldItem == null) return;
         heldItem.GetComponent<Collider>().enabled = true;
         heldItem.transform.SetParent(null);
         heldItem.transform.position = new Vector3(placeLocation.position.x, placeLocation.position.y, heldItemZ);

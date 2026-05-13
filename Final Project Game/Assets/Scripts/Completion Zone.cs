@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Runtime.Serialization.Formatters;
 
 public class CompletionZone : MonoBehaviour{
     public GameObject player2DTarget;
@@ -107,6 +108,7 @@ public class CompletionZone : MonoBehaviour{
             yield return null;
         }
         SoundManager.Stop(SoundType.PORTAL);
+        yield return null;
 
         // reset player transforms and complete level
         player2DTransform.localScale = startScale2D;
