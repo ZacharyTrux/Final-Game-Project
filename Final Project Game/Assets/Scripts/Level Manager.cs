@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// DEBUG VERSION - paste this temporarily to find the spawn bug
-// Check the Unity Console and look for [LM], [PM], [CZ] prefixed logs
 
 public class LevelManager : MonoBehaviour
 {
@@ -41,7 +39,6 @@ public class LevelManager : MonoBehaviour
         player2D = GameObject.FindWithTag("2DPlayer").GetComponent<Player2D>();
         playerTD = GameObject.FindWithTag("TopDownPlayer").GetComponent<PlayerTopDown>();
 
-        // FIX: Reset all completion flags on start — Editor serializes these between runs
         for (int i = 0; i < subLevels.Length; i++)
         {
             subLevels[i].isCompleted = false; // ADD THIS
@@ -56,13 +53,11 @@ public class LevelManager : MonoBehaviour
     {
         Debug.Log($"[LM] ===== SetSubLevel START — index: {currLevel}, name: {subLevels[currLevel].name} =====");
 
-        // --- Validate sublevel objects ---
         if (subLevels[currLevel].subLevelObjects != null)
             subLevels[currLevel].subLevelObjects.SetActive(true);
         else
             Debug.LogError($"[LM] SubLevel Objects missing for: {subLevels[currLevel].name}");
 
-        // --- Validate spawn points ---
         Transform sp2D = subLevels[currLevel].spawnPoint2D;
         Transform spTD = subLevels[currLevel].spawnPointTD;
 
@@ -76,12 +71,10 @@ public class LevelManager : MonoBehaviour
         else
             Debug.Log($"[LM] TD spawn point position: {spTD.position}");
 
-        // --- Set spawn points ---
         player2D.SetSpawn(sp2D);
         playerTD.SetSpawn(spTD);
         Debug.Log($"[LM] SetSpawn called — player2D.SpawnPoint: {player2D.SpawnPoint?.position}");
 
-        // --- Restore physics state ---
         Rigidbody rb2D = player2D.GetComponent<Rigidbody>();
         Rigidbody rbTD = playerTD.GetComponent<Rigidbody>();
 
@@ -92,7 +85,6 @@ public class LevelManager : MonoBehaviour
 
         Debug.Log($"[LM] Physics restored — rb2D.isKinematic: {rb2D.isKinematic}");
 
-        // --- Setup and respawn ---
         Debug.Log($"[LM] Calling Setup2D...");
         PlayerManager.Instance.Setup2D();
 
@@ -100,7 +92,6 @@ public class LevelManager : MonoBehaviour
         PlayerManager.Instance.GroupRespawn();
         Debug.Log($"[LM] GroupRespawn done — player2D pos AFTER: {player2D.transform.position}");
 
-        // Check if position actually matches spawn
         if (sp2D != null)
         {
             float dist = Vector3.Distance(player2D.transform.position, sp2D.position);
@@ -132,7 +123,6 @@ public class LevelManager : MonoBehaviour
         isTransitioning = true;
         curr.isCompleted = true;
 
-        // Deactivate old sublevel so its triggers go dead
         if (curr.subLevelObjects != null)
         {
             curr.subLevelObjects.SetActive(false);

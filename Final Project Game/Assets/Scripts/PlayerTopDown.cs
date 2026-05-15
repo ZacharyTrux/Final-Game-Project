@@ -10,9 +10,7 @@ public class PlayerTopDown : MonoBehaviour{
     public int currHealth;
 
     
-    // layers
     public LayerMask boxLayer;
-    // placement locations
     public Transform holdLocation;
     public Transform placeLocation;
 
@@ -104,7 +102,6 @@ public class PlayerTopDown : MonoBehaviour{
             }
         }
 
-        // store original info on item
         heldItem = closest.gameObject;
         heldItemRotation = heldItem.transform.rotation;
         heldItemZ = heldItem.transform.position.z;

@@ -11874,7 +11874,7 @@ GameObject:
   m_Component:
   - component: {fileID: 650637905}
   m_Layer: 0
-  m_Name: TopDown Spawn
+  m_Name: TopDown Spawn_level3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13585,7 +13585,7 @@ GameObject:
   m_Component:
   - component: {fileID: 720126835}
   m_Layer: 0
-  m_Name: 2D Spawn
+  m_Name: 2D Spawn_level3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14855,7 +14855,7 @@ GameObject:
   m_Component:
   - component: {fileID: 753693728}
   m_Layer: 0
-  m_Name: TopDown Player Spawn
+  m_Name: TopDown Player Spawn_level4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23963,7 +23963,7 @@ GameObject:
   m_Component:
   - component: {fileID: 981568898}
   m_Layer: 0
-  m_Name: 2D Spawn
+  m_Name: 2D Spawn_level5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25341,7 +25341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1083871563}
   m_Layer: 0
-  m_Name: '2D Player Spawn '
+  m_Name: 2D Player Spawn_level4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28276,7 +28276,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1214926810}
   m_Layer: 0
-  m_Name: 2D Spawn
+  m_Name: 2D Spawn_level1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29250,7 +29250,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1256642292}
   m_Layer: 0
-  m_Name: 2D Spawn
+  m_Name: 2D Spawn_level2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30337,7 +30337,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1332721761}
   m_Layer: 0
-  m_Name: TopDown Spawn
+  m_Name: TopDown Spawn_level1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40797,6 +40797,7 @@ MonoBehaviour:
     spawnPoint2D: {fileID: 1083871563}
     spawnPointTD: {fileID: 753693728}
     isCompleted: 0
+  isTransitioning: 0
 --- !u!1 &1645416247 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3710670912749704320, guid: 502220423cd104d36b644cfefe6c9a85, type: 3}
@@ -41168,7 +41169,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CompletionZone
   player2DTarget: {fileID: 0}
   playerTDTarget: {fileID: 0}
-  duration: 2
 --- !u!65 &1655475985
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -44666,7 +44666,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1868945326}
   m_Layer: 0
-  m_Name: TopDown Spawn
+  m_Name: TopDown Spawn_level5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45075,7 +45075,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1911764989}
   m_Layer: 0
-  m_Name: TopDown Spawn
+  m_Name: TopDown Spawn_level2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -2,8 +2,6 @@
 using TMPro;
 using System.Collections;
 
-// DEBUG VERSION — check Unity Console for [CZ] prefixed logs
-
 public class CompletionZone : MonoBehaviour
 {
     public GameObject player2DTarget;
@@ -31,7 +29,6 @@ public class CompletionZone : MonoBehaviour
         }
     }
 
-    // Called by LevelManager when a new sublevel loads — resets this zone for reuse
     public void ResetZone()
     {
         present2D = false;
@@ -69,7 +66,6 @@ public class CompletionZone : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        // Don't allow exit events to undo state once animation is running
         if (isCompleted)
         {
             Debug.Log($"[CZ] OnTriggerExit ignored (isCompleted=true) for: {other.gameObject.name}");
@@ -93,11 +89,9 @@ public class CompletionZone : MonoBehaviour
     {
         Debug.Log("[CZ] PortalAnimation started");
 
-        // --- Disable physics so Rigidbody doesn't fight transform animation ---
         Rigidbody rb2D = player2DTransform.GetComponent<Rigidbody>();
         Rigidbody rbTD = playerTDTransform.GetComponent<Rigidbody>();
 
-        // Zero velocity BEFORE setting kinematic (avoids "kinematic body" error)
         rb2D.linearVelocity = Vector3.zero;
         rb2D.angularVelocity = Vector3.zero;
         rbTD.linearVelocity = Vector3.zero;
@@ -106,7 +100,6 @@ public class CompletionZone : MonoBehaviour
         rb2D.isKinematic = true;
         rbTD.isKinematic = true;
 
-        // Reset rotation immediately so tilt can't carry forward
         player2DTransform.rotation = Quaternion.identity;
         playerTDTransform.rotation = Quaternion.identity;
 
@@ -115,12 +108,10 @@ public class CompletionZone : MonoBehaviour
         PlayerManager.Instance.enabled = false;
         Debug.Log("[CZ] PlayerManager disabled");
 
-        // --- Phase 1: Move players to target spots ---
         Vector3 start2DPos = player2DTransform.position;
         Vector3 startTDPos = playerTDTransform.position;
         float alignElapsed = 0f;
 
-        // --- Phase 1: Move players to target spots --- (NO null checks needed here)
         while (alignElapsed < alignDuration)
         {
             alignElapsed += Time.deltaTime;
@@ -136,7 +127,6 @@ public class CompletionZone : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // --- Phase 2: Spin & shrink into portal ---
         start2DPos = player2DTransform.position;
         startTDPos = playerTDTransform.position;
         Vector3 portalCenter = transform.position;
@@ -144,7 +134,6 @@ public class CompletionZone : MonoBehaviour
         Vector3 startScale2D = player2DTransform.localScale;
         Vector3 startScaleTD = playerTDTransform.localScale;
 
-        // Save identity as target — we ALWAYS want player upright on next level
         Quaternion saved2DRot = Quaternion.identity;
         Quaternion savedTDRot = Quaternion.identity;
 
@@ -179,8 +168,6 @@ public class CompletionZone : MonoBehaviour
         SoundManager.Stop(SoundType.PORTAL);
         Debug.Log("[CZ] Spin phase done");
 
-        // --- Reset transform state BEFORE completing level ---
-        // Reset transforms
         player2DTransform.localScale = startScale2D;
         playerTDTransform.localScale = startScaleTD;
         player2DTransform.rotation = saved2DRot;
@@ -191,20 +178,15 @@ public class CompletionZone : MonoBehaviour
 
         yield return null;
 
-        // FIX: Null out the transform references so nothing can write to them after this
         Transform temp2D = player2DTransform;
         Transform tempTD = playerTDTransform;
         player2DTransform = null;
         playerTDTransform = null;
 
         LevelManager.Instance.CompleteCurrSublevel();
-        // Coroutine ends — no more writes to player transforms possible
     }
     private void OnDisable()
     {
-        // When subLevelObjects.SetActive(false) kills this GameObject,
-        // Unity stops the coroutine automatically — but stop it explicitly
-        // and reset player transform references so no stale writes occur
         if (portalCoroutine != null)
         {
             StopCoroutine(portalCoroutine);

@@ -151,7 +151,6 @@ public class PlayerManager : MonoBehaviour{
         Rigidbody rb2D = player2D.GetComponent<Rigidbody>();
         Rigidbody rbTD = playerTopDown.GetComponent<Rigidbody>();
 
-        // Set both transform AND rigidbody position so interpolation doesn't snap back
         rb2D.position = player2D.SpawnPoint.position;
         rb2D.linearVelocity = Vector3.zero;
         rb2D.angularVelocity = Vector3.zero;
@@ -163,7 +162,6 @@ public class PlayerManager : MonoBehaviour{
         player2D.transform.position = player2D.SpawnPoint.position;
         playerTopDown.transform.position = playerTopDown.SpawnPoint.position;
 
-        // Force physics engine to acknowledge new positions immediately
         Physics.SyncTransforms();
 
         Debug.Log($"[PM] GroupRespawn done — 2D now at: {player2D.transform.position}");
