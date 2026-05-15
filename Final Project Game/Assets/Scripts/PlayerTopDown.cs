@@ -15,7 +15,8 @@ public class PlayerTopDown : MonoBehaviour{
     // placement locations
     public Transform holdLocation;
     public Transform placeLocation;
-    public Transform spawnPoint;
+
+    private Transform spawnPoint;
     
     private Rigidbody rb;
     private PlayerInput controls;
@@ -38,12 +39,17 @@ public class PlayerTopDown : MonoBehaviour{
         GetComponent<BoxCollider>().enabled = true;
         controls.Enable();
         controls.Player.Interact.performed += OnInteractPerformed;
-    } 
-    private void OnDisable(){
+    }
+    private void OnDisable()
+    {
         GetComponent<BoxCollider>().enabled = false;
         controls.Player.Disable();
         controls.Player.Interact.performed -= OnInteractPerformed;
-        rb.linearVelocity = Vector3.zero;
+        if (!rb.isKinematic)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
     private void Update(){

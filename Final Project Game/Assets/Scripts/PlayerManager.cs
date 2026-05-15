@@ -138,9 +138,12 @@ public class PlayerManager : MonoBehaviour{
         }
     }
 
-    public void GroupRespawn(){
+    public void GroupRespawn()
+    {
+        Debug.Log($"[PM] GroupRespawn — spawnPoint2D: {player2D.spawnPoint?.position}, spawnPointTD: {playerTopDown.spawnPoint?.position}");
         player2D.transform.position = player2D.spawnPoint.position;
         playerTopDown.transform.position = playerTopDown.spawnPoint.position;
+        Debug.Log($"[PM] GroupRespawn done — 2D now at: {player2D.transform.position}");
     }
 
     public void TakeDamage(){

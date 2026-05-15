@@ -1,6 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
+using UnityEngine.SceneManagement;
 
 
 [RequireComponent(typeof(Rigidbody))]
@@ -44,10 +45,18 @@ public class Player2D : MonoBehaviour{
         audioSrc = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        rb.constraints = RigidbodyConstraints.FreezeRotation
+                   | RigidbodyConstraints.FreezePositionZ;
         controls = new PlayerInput();
         ground = groundLayer | pickupLayer;
         animator = GetComponentInChildren<Animator>();
         sprite = GetComponentInChildren<SpriteRenderer>();
+    }
+    public void ResetPhysics()
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        transform.rotation = Quaternion.identity; // kills the tilt
     }
 
     void OnEnable(){
@@ -59,15 +68,23 @@ public class Player2D : MonoBehaviour{
         controls.Player.Interact.performed += OnInteractPerformed;
     }
 
-    void OnDisable(){
+    void OnDisable()
+    {
         GetComponent<BoxCollider>().enabled = false;
-        sprite.color = new Color(1f,1f,1f, 0.5f);
+        sprite.color = new Color(1f, 1f, 1f, 0.5f);
         rb.useGravity = false;
         controls.Player.Jump.performed -= OnJumpPerformed;
         controls.Player.Interact.performed -= OnInteractPerformed;
         controls.Player.Disable();
         moveInput = 0f;
-        rb.linearVelocity = Vector3.zero;
+
+        transform.rotation = Quaternion.identity;
+
+        if (!rb.isKinematic)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
     void Update(){
