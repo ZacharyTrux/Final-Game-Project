@@ -56085,6 +56085,16 @@ MonoBehaviour:
     spawnPointTD: {fileID: 650637905}
     isCompleted: 0
   - name: 1.4
+    subLevelObjects: {fileID: 707382200}
+    spawnPoint2D: {fileID: 1716663722}
+    spawnPointTD: {fileID: 442771671}
+    isCompleted: 0
+  - name: 1.5
+    subLevelObjects: {fileID: 1424280710}
+    spawnPoint2D: {fileID: 460239738}
+    spawnPointTD: {fileID: 643054592}
+    isCompleted: 0
+  - name: 1.6
     subLevelObjects: {fileID: 138161478}
     spawnPoint2D: {fileID: 1083871563}
     spawnPointTD: {fileID: 753693728}
