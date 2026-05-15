@@ -20,7 +20,8 @@ public class LevelManager : MonoBehaviour
     private int currLevel = 0;
     private Player2D player2D;
     private PlayerTopDown playerTD;
-    private bool isTransitioning = false;
+    public bool isTransitioning = false;
+
 
     public static LevelManager Instance { get; private set; }
 
@@ -36,13 +37,14 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
+        currLevel = 0;
         player2D = GameObject.FindWithTag("2DPlayer").GetComponent<Player2D>();
         playerTD = GameObject.FindWithTag("TopDownPlayer").GetComponent<PlayerTopDown>();
 
-        Debug.Log($"[LM] Start — Found player2D: {player2D != null}, playerTD: {playerTD != null}");
-
+        // FIX: Reset all completion flags on start — Editor serializes these between runs
         for (int i = 0; i < subLevels.Length; i++)
         {
+            subLevels[i].isCompleted = false; // ADD THIS
             if (subLevels[i].subLevelObjects != null)
                 subLevels[i].subLevelObjects.SetActive(false);
         }
@@ -77,7 +79,7 @@ public class LevelManager : MonoBehaviour
         // --- Set spawn points ---
         player2D.SetSpawn(sp2D);
         playerTD.SetSpawn(spTD);
-        Debug.Log($"[LM] SetSpawn called — player2D.spawnPoint: {player2D.spawnPoint?.position}, playerTD.spawnPoint: {playerTD.spawnPoint?.position}");
+        Debug.Log($"[LM] SetSpawn called — player2D.SpawnPoint: {player2D.SpawnPoint?.position}");
 
         // --- Restore physics state ---
         Rigidbody rb2D = player2D.GetComponent<Rigidbody>();
@@ -146,7 +148,7 @@ public class LevelManager : MonoBehaviour
         if (currLevel <= subLevels.Length - 1)
         {
             SetSubLevel();
-            Invoke(nameof(ResetTransition), 0.5f);
+            Invoke(nameof(ResetTransition), 2f);
         }
         else
         {

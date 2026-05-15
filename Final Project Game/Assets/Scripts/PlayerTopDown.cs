@@ -17,7 +17,7 @@ public class PlayerTopDown : MonoBehaviour{
     public Transform placeLocation;
 
     private Transform spawnPoint;
-    
+
     private Rigidbody rb;
     private PlayerInput controls;
     private Vector2 moveInput;
@@ -130,6 +130,7 @@ public class PlayerTopDown : MonoBehaviour{
     public void SetSpawn(Transform position){
         spawnPoint = position;
     }
+    public Transform SpawnPoint => spawnPoint;
 
     public GameObject GetHeldItem(){
         return heldItem;

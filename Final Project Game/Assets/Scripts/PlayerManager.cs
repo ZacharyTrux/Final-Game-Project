@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using Unity.Cinemachine;
@@ -129,24 +129,49 @@ public class PlayerManager : MonoBehaviour{
         UIScript.Instance.UpdateHealthUI();
     }
 
-    public void Respawn(){
-        if(is2DActive){
-            player2D.transform.position = player2D.spawnPoint.position;
+
+    public void Respawn()
+    {
+        Debug.Log($"[PM] Respawn called — is2DActive: {is2DActive}, moving to: {(is2DActive ? player2D.SpawnPoint?.position : playerTopDown.SpawnPoint?.position)}");
+        if (is2DActive)
+        {
+            player2D.transform.position = player2D.SpawnPoint.position;
         }
-        else{
-            playerTopDown.transform.position = playerTopDown.spawnPoint.position;
+        else
+        {
+            playerTopDown.transform.position = playerTopDown.SpawnPoint.position;
         }
     }
+
 
     public void GroupRespawn()
     {
-        Debug.Log($"[PM] GroupRespawn � spawnPoint2D: {player2D.spawnPoint?.position}, spawnPointTD: {playerTopDown.spawnPoint?.position}");
-        player2D.transform.position = player2D.spawnPoint.position;
-        playerTopDown.transform.position = playerTopDown.spawnPoint.position;
-        Debug.Log($"[PM] GroupRespawn done � 2D now at: {player2D.transform.position}");
+        Debug.LogWarning($"[PM] GroupRespawn called!\n{new System.Diagnostics.StackTrace()}");
+
+        Rigidbody rb2D = player2D.GetComponent<Rigidbody>();
+        Rigidbody rbTD = playerTopDown.GetComponent<Rigidbody>();
+
+        // Set both transform AND rigidbody position so interpolation doesn't snap back
+        rb2D.position = player2D.SpawnPoint.position;
+        rb2D.linearVelocity = Vector3.zero;
+        rb2D.angularVelocity = Vector3.zero;
+
+        rbTD.position = playerTopDown.SpawnPoint.position;
+        rbTD.linearVelocity = Vector3.zero;
+        rbTD.angularVelocity = Vector3.zero;
+
+        player2D.transform.position = player2D.SpawnPoint.position;
+        playerTopDown.transform.position = playerTopDown.SpawnPoint.position;
+
+        // Force physics engine to acknowledge new positions immediately
+        Physics.SyncTransforms();
+
+        Debug.Log($"[PM] GroupRespawn done — 2D now at: {player2D.transform.position}");
     }
 
-    public void TakeDamage(){
+    public void TakeDamage()
+    {
+        if (LevelManager.Instance.isTransitioning) return;
         currHealth -= 1;
         Respawn();
         checkHealth();
@@ -158,5 +183,20 @@ public class PlayerManager : MonoBehaviour{
 
     public bool IsTopDownActive(){
         return !is2DActive;
+    }
+
+    private Vector3 lastKnownPos;
+
+    
+
+    void LateUpdate()
+    {
+        if (player2D == null) return;
+
+        if (Vector3.Distance(player2D.transform.position, lastKnownPos) > 2f)
+        {
+            Debug.LogWarning($"[PM] player2D MOVED UNEXPECTEDLY — from: {lastKnownPos} to: {player2D.transform.position}\n{new System.Diagnostics.StackTrace()}");
+        }
+        lastKnownPos = player2D.transform.position;
     }
 }

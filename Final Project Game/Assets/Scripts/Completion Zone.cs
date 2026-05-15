@@ -21,6 +21,8 @@ public class CompletionZone : MonoBehaviour
     private float duration = 2f;
     private float spinSpeed = 1000f;
 
+    private Coroutine portalCoroutine;
+
     private void Awake()
     {
         if (hintText == null)
@@ -61,7 +63,7 @@ public class CompletionZone : MonoBehaviour
             Debug.Log("[CZ] ✅ Both players present — starting PortalAnimation");
             hintText.text = "";
             isCompleted = true;
-            StartCoroutine(PortalAnimation());
+            portalCoroutine = StartCoroutine(PortalAnimation());
         }
     }
 
@@ -118,6 +120,7 @@ public class CompletionZone : MonoBehaviour
         Vector3 startTDPos = playerTDTransform.position;
         float alignElapsed = 0f;
 
+        // --- Phase 1: Move players to target spots --- (NO null checks needed here)
         while (alignElapsed < alignDuration)
         {
             alignElapsed += Time.deltaTime;
@@ -154,15 +157,21 @@ public class CompletionZone : MonoBehaviour
             float progress = Mathf.Clamp01(timeElapsed / duration);
             float easeProgress = Mathf.Pow(progress, 3);
 
-            player2DTransform.position = Vector3.Lerp(start2DPos, portalCenter, easeProgress);
-            playerTDTransform.position = Vector3.Lerp(startTDPos, portalCenter, easeProgress);
+            if (player2DTransform != null)
+                player2DTransform.position = Vector3.Lerp(start2DPos, portalCenter, easeProgress);
+            if (playerTDTransform != null)
+                playerTDTransform.position = Vector3.Lerp(startTDPos, portalCenter, easeProgress);
 
-            player2DTransform.localScale = Vector3.Lerp(startScale2D, Vector3.zero, easeProgress);
-            playerTDTransform.localScale = Vector3.Lerp(startScaleTD, Vector3.zero, easeProgress);
+            if (player2DTransform != null)
+                player2DTransform.localScale = Vector3.Lerp(startScale2D, Vector3.zero, easeProgress);
+            if (playerTDTransform != null)
+                playerTDTransform.localScale = Vector3.Lerp(startScaleTD, Vector3.zero, easeProgress);
 
             float currentSpin = Mathf.Lerp(0, spinSpeed, easeProgress);
-            player2DTransform.Rotate(Vector3.forward, currentSpin * Time.deltaTime);
-            playerTDTransform.Rotate(Vector3.up, currentSpin * Time.deltaTime);
+            if (player2DTransform != null)
+                player2DTransform.Rotate(Vector3.forward, currentSpin * Time.deltaTime);
+            if (playerTDTransform != null)
+                playerTDTransform.Rotate(Vector3.up, currentSpin * Time.deltaTime);
 
             yield return null;
         }
@@ -177,14 +186,31 @@ public class CompletionZone : MonoBehaviour
         player2DTransform.rotation = saved2DRot;
         playerTDTransform.rotation = savedTDRot;
 
-        // FIX: Restore kinematic HERE, before CompleteCurrSublevel,
-        // so that GroupRespawn()'s transform.position assignment actually works
         rb2D.isKinematic = false;
         rbTD.isKinematic = false;
 
-        yield return null; // one frame for physics to acknowledge non-kinematic state
+        yield return null;
 
-        Debug.Log("[CZ] Calling CompleteCurrSublevel...");
+        // FIX: Null out the transform references so nothing can write to them after this
+        Transform temp2D = player2DTransform;
+        Transform tempTD = playerTDTransform;
+        player2DTransform = null;
+        playerTDTransform = null;
+
         LevelManager.Instance.CompleteCurrSublevel();
+        // Coroutine ends — no more writes to player transforms possible
+    }
+    private void OnDisable()
+    {
+        // When subLevelObjects.SetActive(false) kills this GameObject,
+        // Unity stops the coroutine automatically — but stop it explicitly
+        // and reset player transform references so no stale writes occur
+        if (portalCoroutine != null)
+        {
+            StopCoroutine(portalCoroutine);
+            portalCoroutine = null;
+        }
+        player2DTransform = null;
+        playerTDTransform = null;
     }
 }

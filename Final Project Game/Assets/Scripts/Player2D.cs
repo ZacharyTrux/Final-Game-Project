@@ -25,7 +25,8 @@ public class Player2D : MonoBehaviour{
     private LayerMask ground;
 
     [Header("Health")]
-    public Transform spawnPoint;
+    private Transform spawnPoint;
+    public Transform SpawnPoint => spawnPoint;
 
     private Rigidbody rb;
     private PlayerInput controls;
