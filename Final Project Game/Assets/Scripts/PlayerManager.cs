@@ -121,7 +121,7 @@ public class PlayerManager : MonoBehaviour{
         if (playerTopDown != null) playerTopDown.enabled = true;
     }
 
-    public void CheckHealth(){
+    public void checkHealth(){
         if(currHealth <= 0){
             Destroy(UIScript.Instance.gameObject);
             SceneManager.LoadScene(loseScreen);
@@ -129,26 +129,24 @@ public class PlayerManager : MonoBehaviour{
         UIScript.Instance.UpdateHealthUI();
     }
 
-    public void RespawnCurrPlayer(){
+    public void Respawn(){
         if(is2DActive){
-            player2D.Respawn();
+            player2D.transform.position = player2D.spawnPoint.position;
         }
         else{
-            playerTopDown.Respawn();
+            playerTopDown.transform.position = playerTopDown.spawnPoint.position;
         }
     }
 
     public void GroupRespawn(){
-        player2D.Respawn();
-        playerTopDown.Respawn();
+        player2D.transform.position = player2D.spawnPoint.position;
+        playerTopDown.transform.position = playerTopDown.spawnPoint.position;
     }
 
-    public void TakeDamage(bool shouldRespawn){
+    public void TakeDamage(){
         currHealth -= 1;
-        if (shouldRespawn){
-            RespawnCurrPlayer();            
-        }
-        CheckHealth();
+        Respawn();
+        checkHealth();
     }
 
     public bool Is2DActive(){

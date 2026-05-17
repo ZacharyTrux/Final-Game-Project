@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class PlayerTopDown : MonoBehaviour{
     public float moveSpeed = 5f;
-    public float pickupRange = 3f;
+    public float pickupRange = 10f;
 
     private int maxHealth = 3;
     public int currHealth;
+
     
     // layers
     public LayerMask boxLayer;
@@ -21,7 +21,8 @@ public class PlayerTopDown : MonoBehaviour{
     private PlayerInput controls;
     private Vector2 moveInput;
     private GameObject heldItem;
-    private PickupObject currentTarget;
+    private Quaternion heldItemRotation;
+    private float heldItemZ; 
     
 
     void Awake(){
@@ -48,9 +49,7 @@ public class PlayerTopDown : MonoBehaviour{
     private void Update(){
         moveInput = controls.Player.Move.ReadValue<Vector2>();
         HandleRotation();
-        //transform.position = new Vector3(transform.position.x, transform.position.y, spawnPoint.transform.position.z);
 
-        CheckForNearbyObjects();
         if(heldItem != null){
             heldItem.transform.localRotation = Quaternion.identity;
         }
@@ -86,52 +85,40 @@ public class PlayerTopDown : MonoBehaviour{
     }
 
     void TryPickUp(){
-        if(currentTarget != null){
-            currentTarget.Pickup(holdLocation);
-            heldItem = currentTarget.gameObject;
-            currentTarget = null;
-        }
-    }
-
-    private void CheckForNearbyObjects(){
-        if(heldItem != null) return;
-
         Collider[] objects = Physics.OverlapSphere(transform.position, pickupRange, boxLayer);
-        
-        PickupObject closestObject = null;
+        if(objects.Length == 0) return;
+
+        Collider closest = null;
         float closestDist = Mathf.Infinity;
-
         foreach(Collider obj in objects){
-            float dist = (transform.position - obj.transform.position).sqrMagnitude;
-            if(dist < closestDist)
-            {
-                if(obj.TryGetComponent(out PickupObject pickupComponent))
-                {
-                    closestDist = dist;
-                    closestObject = pickupComponent;
-                }
+            float dist = Vector3.Distance(transform.position, obj.transform.position);
+            if(dist < closestDist){
+                closestDist = dist;
+                closest = obj;
             }
         }
 
-        if(closestObject != currentTarget){
-            if(currentTarget != null){
-                currentTarget.ResetOutline();
-            }
-            currentTarget = closestObject;
-            if(currentTarget != null){
-                currentTarget.SetOutline();
-            }
-        }
+        // store original info on item
+        heldItem = closest.gameObject;
+        heldItemRotation = heldItem.transform.rotation;
+        heldItemZ = heldItem.transform.position.z;
+
+        heldItem.GetComponent<Collider>().enabled = false;
+        heldItem.transform.SetParent(holdLocation);
+        heldItem.transform.localPosition = Vector3.zero;
     }
 
     public void Drop(){
         if(heldItem == null) return;
-        heldItem.GetComponent<PickupObject>().Drop(holdLocation);
+        heldItem.GetComponent<Collider>().enabled = true;
+        heldItem.transform.SetParent(null);
+        heldItem.transform.position = new Vector3(placeLocation.position.x, placeLocation.position.y, heldItemZ);
+        heldItem.transform.rotation = heldItemRotation;
         heldItem = null;
     }
 
     public void TakeDamage(){
-        PlayerManager.Instance.TakeDamage(false);
+        PlayerManager.Instance.TakeDamage();
     }
 
     public void SetSpawn(Transform position){
@@ -140,9 +127,5 @@ public class PlayerTopDown : MonoBehaviour{
 
     public GameObject GetHeldItem(){
         return heldItem;
-    }
-
-    public void Respawn(){
-        transform.position = spawnPoint.position;
     }
 }

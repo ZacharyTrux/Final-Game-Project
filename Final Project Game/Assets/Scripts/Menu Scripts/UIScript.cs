@@ -68,7 +68,7 @@ public class UIScript : MonoBehaviour{
     public void ForceRespawn(){
         SoundManager.Play(SoundType.BUTTON_CLICK);
         ContinueGame();
-        PlayerManager.Instance.RespawnCurrPlayer();
+        PlayerManager.Instance.Respawn();
     }
 
     public void ReturnToMenu(){

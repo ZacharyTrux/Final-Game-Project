@@ -235,7 +235,7 @@ public class Ghost2DChase : MonoBehaviour
 
         Debug.Log("2D Player hit ghost from side. Damage + Ghost stunned.");
 
-        //PlayerManager.Instance?.TakeDamage();
+        PlayerManager.Instance?.TakeDamage();
         ScoringManager.Instance?.AddScore(-scorePenalty);
         StunGhost();
 

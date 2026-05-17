@@ -52,26 +52,32 @@ public class LevelManager : MonoBehaviour
         Debug.Log("Loading sublevel index: " + currLevel + " Name: " + subLevels[currLevel].name);
 
         // Turn on current sublevel
-        if (subLevels[currLevel].subLevelObjects != null){
+        if (subLevels[currLevel].subLevelObjects != null)
+        {
             subLevels[currLevel].subLevelObjects.SetActive(true);
         }
-        else{
+        else
+        {
             Debug.LogError("SubLevel Objects missing for: " + subLevels[currLevel].name);
         }
 
-        if (subLevels[currLevel].spawnPoint2D == null){
+        if (subLevels[currLevel].spawnPoint2D == null)
+        {
             Debug.LogError("2D spawn point missing for: " + subLevels[currLevel].name);
         }
 
-        if (subLevels[currLevel].spawnPointTD == null){
+        if (subLevels[currLevel].spawnPointTD == null)
+        {
             Debug.LogError("TopDown spawn point missing for: " + subLevels[currLevel].name);
         }
 
         player2D.SetSpawn(subLevels[currLevel].spawnPoint2D);
         playerTD.SetSpawn(subLevels[currLevel].spawnPointTD);
 
+        PlayerManager.Instance.GroupRespawn();
         PlayerManager.Instance.Setup2D();
         ScoringManager.Instance.StartLevelTracking();
+        PlayerManager.Instance.enabled = true;
         PlayerManager.Instance.GroupRespawn();
     }
 
@@ -87,7 +93,7 @@ public class LevelManager : MonoBehaviour
 
         if (curr.subLevelObjects != null)
         {
-            curr.subLevelObjects.SetActive(false);
+            //curr.subLevelObjects.SetActive(false);
         }
 
         currLevel += 1;

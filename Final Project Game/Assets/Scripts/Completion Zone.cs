@@ -59,17 +59,10 @@ public class CompletionZone : MonoBehaviour{
     }
     
     private IEnumerator PortalAnimation(){
-        PlayerManager.Instance.enabled = false;
-
-        Rigidbody Rb2D = player2DTransform.GetComponent<Rigidbody>();
-        Rigidbody RbTD = playerTDTransform.GetComponent<Rigidbody>();
-        Rb2D.isKinematic = true;
-        RbTD.isKinematic = true;
-
+        PlayerManager.Instance.enabled = false; 
         // move players to portal spot 
         Vector3 start2DPos = player2DTransform.position;
         Vector3 startTDPos = playerTDTransform.position;
-
         while(alignElasped < alignDuration){
             alignElasped += Time.deltaTime;
             float progress = Mathf.Clamp01(alignElasped / alignDuration);
@@ -115,17 +108,17 @@ public class CompletionZone : MonoBehaviour{
             yield return null;
         }
         SoundManager.Stop(SoundType.PORTAL);
+        yield return null;
 
         // reset player transforms and complete level
         player2DTransform.localScale = startScale2D;
         playerTDTransform.localScale = startScaleTD;
         player2DTransform.rotation = start2DRot;
         playerTDTransform.rotation = startTDRot;
-
+        player2DTransform.localScale = startScale2D;
+        playerTDTransform.localScale = startScaleTD;
+        player2DTransform.rotation = start2DRot;
+        playerTDTransform.rotation = startTDRot;
         LevelManager.Instance.CompleteCurrSublevel();
-
-        Rb2D.isKinematic = false;
-        RbTD.isKinematic = false;
-        PlayerManager.Instance.enabled = true;
     }
 }

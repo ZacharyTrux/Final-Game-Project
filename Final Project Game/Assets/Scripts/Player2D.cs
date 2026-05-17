@@ -74,7 +74,6 @@ public class Player2D : MonoBehaviour{
         moveInput = controls.Player.Move.ReadValue<Vector2>().x;
         wasGrounded = isGrounded;
         isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, ground);
-        //transform.position.z = spawnPoint.transform.position.z;
         HandleAnimation();
     }
 
@@ -155,7 +154,7 @@ public class Player2D : MonoBehaviour{
     }
 
     public void TakeDamage(){
-        PlayerManager.Instance.TakeDamage(true);
+        PlayerManager.Instance.TakeDamage();
     }
 
     public void SetSpawn(Transform position){
@@ -167,11 +166,12 @@ public class Player2D : MonoBehaviour{
     }
 
     private IEnumerator DrowningCoroutine(){ // handle giving time for drowning animation
-        SoundManager.Play(SoundType.DROWNING, true, audioSrc);
+        SoundManager.Play(SoundType.DROWNING,true, audioSrc);
         animator.SetTrigger("Drowning");
         yield return new WaitForSeconds(0.5f);
-        PlayerManager.Instance.TakeDamage(true);
+        PlayerManager.Instance.TakeDamage();
         animator.SetTrigger("Idle");
+        gameObject.transform.position = spawnPoint.position;
     }
 
     private void OnDrawGizmosSelected()
@@ -202,9 +202,5 @@ public class Player2D : MonoBehaviour{
             SoundManager.Play(SoundType.WALKING, true, audioSrc);
             stepTimer = stepInterval;
         }
-    }
-
-    public void Respawn(){
-        transform.position = spawnPoint.position;
     }
 }
