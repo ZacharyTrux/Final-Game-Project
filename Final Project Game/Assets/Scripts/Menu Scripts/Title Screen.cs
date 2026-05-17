@@ -27,6 +27,7 @@ public class TitleScreen : MonoBehaviour{
     }
 
     public void StartGame(){
+        ScoringManager.Instance.ResetScore();
         SoundManager.Play(SoundType.BUTTON_CLICK);
         SceneManager.LoadScene("Forest Level");
         Cursor.visible = false;

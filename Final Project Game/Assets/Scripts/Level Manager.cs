@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿﻿﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
@@ -94,5 +94,9 @@ public class LevelManager : MonoBehaviour
             Destroy(UIScript.Instance.gameObject);
             SceneManager.LoadScene("Victory Screen");
         }
+    }
+
+    private void ResetTransition(){
+        isTransitioning = false;
     }
 }

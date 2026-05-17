@@ -150,8 +150,8 @@ public class CompletionZone : MonoBehaviour
 
         LevelManager.Instance.CompleteCurrSublevel();
 
-        Rb2D.isKinematic = false;
-        RbTD.isKinematic = false;
+        rb2D.isKinematic = false;
+        rbTD.isKinematic = false;
         PlayerManager.Instance.enabled = true;
     }
     private void OnDisable(){

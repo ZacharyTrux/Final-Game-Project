@@ -74,21 +74,6 @@ public class ScoringManager : MonoBehaviour{
         Debug.Log("Penalty: -" + amount + " | Score: " + currScore);
     }
 
-    public void BombPenalty()
-    {
-        AddPenalty(100);
-    }
-
-    public void WrongMovePenalty()
-    {
-        AddPenalty(50);
-    }
-
-    public void PuzzleCompleteBonus()
-    {
-        AddScore(300);
-    }
-
     public void SubmitScore(){
         HS.SubmitHighScore(this, playerName, currScore);
     }

@@ -39,6 +39,9 @@ public class PlayerTopDown : MonoBehaviour{
         controls.Player.Interact.performed += OnInteractPerformed;
     } 
     private void OnDisable(){
+        if(currentTarget != null){
+            currentTarget.ResetOutline();
+        }
         GetComponent<BoxCollider>().enabled = false;
         controls.Player.Disable();
         controls.Player.Interact.performed -= OnInteractPerformed;
