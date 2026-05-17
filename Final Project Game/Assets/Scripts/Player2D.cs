@@ -185,8 +185,12 @@ public class Player2D : MonoBehaviour{
         if (wallCheck != null)
         {
             Gizmos.color = Color.red;
+            // Draw a line to the right
             Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3.right * wallDistance));
-            Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3.left * wallDistance));  
+            // Draw a line to the left
+            Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3.left * wallDistance));
+            
+            // Draw small spheres at the end of the lines so you can see exactly where the check stops
             Gizmos.DrawWireSphere(wallCheck.position + (Vector3.right * wallDistance), 0.05f);
             Gizmos.DrawWireSphere(wallCheck.position + (Vector3.left * wallDistance), 0.05f);
         }

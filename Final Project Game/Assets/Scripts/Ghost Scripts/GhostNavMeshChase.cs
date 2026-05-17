@@ -168,8 +168,6 @@ public class GhostTopDownNavMeshChase : MonoBehaviour
             Debug.LogWarning("ScoringManager.Instance not found.");
         }
 
-        SoundManager.Play(SoundType.HIT_GHOST);
-        
         if (damageFlash != null)
         {
             damageFlash.CallDamageFlash();
