@@ -204,8 +204,7 @@ public class Player2D : MonoBehaviour{
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3.right * wallDistance));
-            Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3.left * wallDistance));
-            
+            Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3.left * wallDistance));  
             Gizmos.DrawWireSphere(wallCheck.position + (Vector3.right * wallDistance), 0.05f);
             Gizmos.DrawWireSphere(wallCheck.position + (Vector3.left * wallDistance), 0.05f);
         }
