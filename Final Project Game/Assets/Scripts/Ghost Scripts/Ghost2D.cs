@@ -16,11 +16,11 @@ public class Ghost2DChase : MonoBehaviour
     public float stopDistanceX = 0.25f;
 
     [Header("Patrol Waypoints")]
-    public Transform patrolLeftPoint;   // ← Assign in Inspector
-    public Transform patrolRightPoint;  // ← Assign in Inspector
+    public Transform patrolLeftPoint;   
+    public Transform patrolRightPoint;  
 
     [Header("Aggro Range")]
-    public float aggroRangeX = 5f;      // Player must be within this X distance to trigger chase
+    public float aggroRangeX = 5f;      
 
     [Header("Damage Settings")]
     public int scorePenalty = 50;
@@ -97,7 +97,6 @@ public class Ghost2DChase : MonoBehaviour
             Patrol();
     }
 
-    // ── State Decision ─────────────────────────────────────────────────────
 
     private void DecideState()
     {
@@ -119,7 +118,6 @@ public class Ghost2DChase : MonoBehaviour
         }
     }
 
-    // ── Chase ──────────────────────────────────────────────────────────────
 
     private void ChasePlayer()
     {
@@ -131,7 +129,6 @@ public class Ghost2DChase : MonoBehaviour
         MoveOnX(Mathf.Sign(distanceX), chaseSpeed);
     }
 
-    // ── Patrol ─────────────────────────────────────────────────────────────
 
     private void Patrol()
     {
@@ -157,7 +154,6 @@ public class Ghost2DChase : MonoBehaviour
             currentPatrolTarget = patrolRightPoint;
     }
 
-    // ── Movement ───────────────────────────────────────────────────────────
 
     private void MoveOnX(float direction, float speed)
     {
@@ -179,7 +175,6 @@ public class Ghost2DChase : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
     }
 
-    // ── Stun ───────────────────────────────────────────────────────────────
 
     private void UpdateStun()
     {
@@ -193,7 +188,6 @@ public class Ghost2DChase : MonoBehaviour
         }
     }
 
-    // ── Collision ──────────────────────────────────────────────────────────
 
     private void OnTriggerEnter(Collider other)   { HandlePlayerTouch(other); }
     private void OnTriggerStay(Collider other)    { HandlePlayerTouch(other); }
@@ -237,6 +231,12 @@ public class Ghost2DChase : MonoBehaviour
 
         //PlayerManager.Instance?.TakeDamage();
         ScoringManager.Instance?.AddScore(-scorePenalty);
+
+        SoundManager.Play(SoundType.HIT_GHOST); 
+
+        if (DamageText.Instance != null)
+            DamageText.Instance.Show("-" + scorePenalty);
+
         StunGhost();
 
         damageTimer = damageCooldown;
@@ -253,28 +253,22 @@ public class Ghost2DChase : MonoBehaviour
     {
         Debug.Log("2D Player stomped ghost. Ghost killed.");
 
-        // Play death particle at ghost position
+        ScoringManager.Instance?.AddScore(100);
+        SoundManager.Play(SoundType.KILL_GHOST);   
+
         if (deathParticlePrefab != null)
         {
             ParticleSystem effect = Instantiate(
                 deathParticlePrefab,
-                transform.position,   // spawn at ghost position
-                Quaternion.identity   // no rotation needed
+                transform.position,
+                Quaternion.identity
             );
-
-            // Make sure it plays and self-destructs when done
             var main = effect.main;
             main.loop = false;
             main.stopAction = ParticleSystemStopAction.Destroy;
-
             effect.Play();
         }
-        else
-        {
-            Debug.LogWarning("No death particle prefab assigned on ghost.");
-        }
 
-        // Disable collider so no more triggers fire
         if (ghostCollider != null) ghostCollider.enabled = false;
 
         if (rb != null)
